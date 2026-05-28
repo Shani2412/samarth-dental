@@ -1,0 +1,12 @@
+{
+  "/page": "app/page.js",
+  "/website/page": "app/website/page.js",
+  "/login/page": "app/login/page.js",
+  "/admin/page": "app/admin/page.js",
+  "/admin/photos/page": "app/admin/photos/page.js",
+  "/admin/patients/page": "app/admin/patients/page.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/dashboard/appointments/page": "app/dashboard/appointments/page.js",
+  "/dashboard/review/page": "app/dashboard/review/page.js",
+  "/dashboard/history/page": "app/dashboard/history/page.js"
+}

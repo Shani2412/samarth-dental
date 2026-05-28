@@ -1,0 +1,130 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(cuid())
+  name         String
+  email        String        @unique
+  password     String?
+  role         Role          @default(USER)
+  googleId     String?       @unique
+  avatar       String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  appointments  Appointment[]
+  reviews       Review[]
+  patientRecord PatientRecord?
+
+  @@map("users")
+}
+
+model Appointment {
+  id        String            @id @default(cuid())
+  userId    String
+  name      String
+  email     String
+  phone     String
+  service   String
+  date      String?
+  time      String?
+  message   String?
+  status    AppointmentStatus @default(PENDING)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("appointments")
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String
+  location  String   @default("Mehsana")
+  stars     Int
+  text      String
+  approved  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("reviews")
+}
+
+model Photo {
+  id          String      @id @default(cuid())
+  url         String
+  filename    String
+  category    PhotoCategory
+  title       String?
+  description String?
+  order       Int         @default(0)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@map("photos")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+enum PhotoCategory {
+  CLINIC
+  DOCTOR
+  TREATMENT
+  BEFORE_AFTER
+  GALLERY
+}
+
+model PatientRecord {
+  id               String        @id @default(cuid())
+  userId           String        @unique
+  bloodGroup       String?
+  allergies        String?
+  existingProblems String?
+  lastDentalVisit  String?
+  notes            String?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  visits           VisitRecord[]
+
+  @@map("patient_records")
+}
+
+model VisitRecord {
+  id              String        @id @default(cuid())
+  patientRecordId String
+  appointmentId   String?
+  visitDate       String
+  treatment       String
+  toothNumbers    String?
+  medicines       String?
+  notes           String?
+  nextVisitDate   String?
+  amountCharged   Float?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  patientRecord   PatientRecord @relation(fields: [patientRecordId], references: [id], onDelete: Cascade)
+
+  @@map("visit_records")
+}
