@@ -59,7 +59,7 @@ export default function AdminPatients() {
             const hasRecord = !!p.patientRecord;
             return (
               <div key={p.id}
-                onClick={() => router.push(`/admin/patients/${p.id}`)}
+                onClick={() => { window.location.href = `/admin/patients/${p.id}`; }}
                 className="card p-5 flex items-center gap-4 cursor-pointer hover:shadow-md hover:-translate-y-0.5 transition-all">
                 {/* Avatar */}
                 <div className="w-12 h-12 bg-teal-light rounded-full flex items-center justify-center text-teal font-bold text-lg flex-shrink-0">
