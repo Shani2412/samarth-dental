@@ -11,15 +11,17 @@ export function useAuth(required = true, adminOnly = false) {
   const pathname = usePathname();
 
   useEffect(() => {
-    const token = getToken();
+    const token  = getToken();
+    const cached = getUser();
 
+    // No token — redirect to login
     if (!token) {
       if (required) router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
       setLoading(false);
       return;
     }
 
-    const cached = getUser();
+    // Have cached user with role — use it directly, no API call needed
     if (cached && cached.role) {
       if (adminOnly && cached.role !== 'ADMIN') {
         router.replace('/website');
@@ -34,18 +36,23 @@ export function useAuth(required = true, adminOnly = false) {
     api.get('/auth/me')
       .then(res => {
         const u = res.data.data?.user || res.data.user;
-        if (!u) throw new Error('No user returned');
+        if (!u) throw new Error('No user');
         if (adminOnly && u.role !== 'ADMIN') {
           router.replace('/website');
           return;
         }
-        // Save full user with email
         saveAuth(token, u);
         setUser(u);
       })
       .catch(() => {
-        clearAuth();
-        if (required) router.replace('/login');
+        // If /auth/me fails but we have a token, try to use cached user
+        // Don't immediately logout — token might still be valid
+        if (cached) {
+          setUser(cached);
+        } else {
+          clearAuth();
+          if (required) router.replace('/login');
+        }
       })
       .finally(() => setLoading(false));
   }, []);
