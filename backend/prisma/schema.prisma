@@ -128,3 +128,4 @@ model VisitRecord {
 
   @@map("visit_records")
 }
+  
