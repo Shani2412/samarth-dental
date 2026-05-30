@@ -1,24 +1,26 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { getUser, getToken, clearAuth, User } from '@/lib/auth';
+import { useRouter, usePathname } from 'next/navigation';
+import { getUser, getToken, clearAuth, saveAuth, User } from '@/lib/auth';
 import api from '@/lib/api';
 
 export function useAuth(required = true, adminOnly = false) {
   const [user, setUser]       = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
+  const router   = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     const token = getToken();
+
     if (!token) {
-      if (required) router.replace('/login');
+      if (required) router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
       setLoading(false);
       return;
     }
 
     const cached = getUser();
-    if (cached) {
+    if (cached && cached.role) {
       if (adminOnly && cached.role !== 'ADMIN') {
         router.replace('/website');
         return;
@@ -28,13 +30,18 @@ export function useAuth(required = true, adminOnly = false) {
       return;
     }
 
-    // Verify token with backend
+    // Token exists but no cached user — verify with backend
     api.get('/auth/me')
       .then(res => {
         const u = res.data.data?.user || res.data.user;
-        if (adminOnly && u?.role !== 'ADMIN') { router.replace('/website'); return; }
+        if (!u) throw new Error('No user returned');
+        if (adminOnly && u.role !== 'ADMIN') {
+          router.replace('/website');
+          return;
+        }
+        // Save full user with email
+        saveAuth(token, u);
         setUser(u);
-        localStorage.setItem('sd_user', JSON.stringify(u));
       })
       .catch(() => {
         clearAuth();
