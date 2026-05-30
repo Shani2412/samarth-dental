@@ -1,9 +1,27 @@
-const prisma = require('../config/db');
-const path   = require('path');
-const fs     = require('fs');
+const prisma      = require('../config/db');
 const { success, error } = require('../utils/response');
+const cloudinary  = require('cloudinary').v2;
+const streamifier = require('streamifier');
+
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key:    process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 const VALID_CATEGORIES = ['CLINIC', 'DOCTOR', 'TREATMENT', 'BEFORE_AFTER', 'GALLERY'];
+
+// Upload buffer to Cloudinary
+function uploadToCloudinary(buffer, folder) {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder: `samarth-dental/${folder}`, resource_type: 'image', quality: 'auto', fetch_format: 'auto' },
+      (err, result) => err ? reject(err) : resolve(result)
+    );
+    streamifier.createReadStream(buffer).pipe(stream);
+  });
+}
 
 // ── POST /api/admin/photos ── Upload photo
 async function uploadPhoto(req, res) {
@@ -15,16 +33,15 @@ async function uploadPhoto(req, res) {
     if (!VALID_CATEGORIES.includes(category.toUpperCase()))
       return error(res, `Invalid category. Use: ${VALID_CATEGORIES.join(', ')}`, 400);
 
-    // Get next order number for this category
-    const count = await prisma.photo.count({ where: { category: category.toUpperCase() } });
+    // Upload to Cloudinary
+    const result = await uploadToCloudinary(req.file.buffer, category.toLowerCase());
 
-    const baseUrl = process.env.APP_URL || `http://localhost:${process.env.PORT || 5000}`;
-    const url     = `${baseUrl}/uploads/${req.file.filename}`;
+    const count = await prisma.photo.count({ where: { category: category.toUpperCase() } });
 
     const photo = await prisma.photo.create({
       data: {
-        url,
-        filename:    req.file.filename,
+        url:         result.secure_url,
+        filename:    result.public_id,
         category:    category.toUpperCase(),
         title:       title || '',
         description: description || '',
@@ -34,19 +51,15 @@ async function uploadPhoto(req, res) {
 
     return success(res, { photo }, 'Photo uploaded successfully!', 201);
   } catch (e) {
-    // Clean up uploaded file on error
-    if (req.file) {
-      const filePath = path.join(__dirname, '../../uploads', req.file.filename);
-      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-    }
     console.error('[uploadPhoto]', e);
     return error(res, 'Upload failed');
   }
 }
 
-// ── GET /api/photos ── Public: get all photos (grouped by category)
+// ── GET /api/photos ── Public
 async function getPhotos(req, res) {
   try {
+    res.set('Cache-Control', 'public, max-age=60');
     const { category } = req.query;
     const where = category ? { category: category.toUpperCase() } : {};
 
@@ -55,7 +68,6 @@ async function getPhotos(req, res) {
       orderBy: [{ category: 'asc' }, { order: 'asc' }, { createdAt: 'desc' }],
     });
 
-    // Group by category
     const grouped = photos.reduce((acc, photo) => {
       if (!acc[photo.category]) acc[photo.category] = [];
       acc[photo.category].push(photo);
@@ -64,12 +76,11 @@ async function getPhotos(req, res) {
 
     return success(res, { photos, grouped });
   } catch (e) {
-    console.error('[getPhotos]', e);
     return error(res, 'Could not fetch photos');
   }
 }
 
-// ── GET /api/admin/photos ── Admin: get all photos with details
+// ── GET /api/admin/photos ── Admin
 async function getAllPhotos(req, res) {
   try {
     const photos = await prisma.photo.findMany({
@@ -81,7 +92,7 @@ async function getAllPhotos(req, res) {
   }
 }
 
-// ── PATCH /api/admin/photos/:id ── Update photo info
+// ── PATCH /api/admin/photos/:id ──
 async function updatePhoto(req, res) {
   try {
     const { id } = req.params;
@@ -101,26 +112,23 @@ async function updatePhoto(req, res) {
 
     return success(res, { photo: updated }, 'Photo updated');
   } catch (e) {
-    console.error('[updatePhoto]', e);
     return error(res, 'Could not update photo');
   }
 }
 
-// ── DELETE /api/admin/photos/:id ── Delete photo
+// ── DELETE /api/admin/photos/:id ──
 async function deletePhoto(req, res) {
   try {
     const { id } = req.params;
     const photo = await prisma.photo.findUnique({ where: { id } });
     if (!photo) return error(res, 'Photo not found', 404);
 
-    // Delete from filesystem
-    const filePath = path.join(__dirname, '../../uploads', photo.filename);
-    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    // Delete from Cloudinary
+    await cloudinary.uploader.destroy(photo.filename).catch(console.error);
 
     await prisma.photo.delete({ where: { id } });
     return success(res, {}, 'Photo deleted successfully');
   } catch (e) {
-    console.error('[deletePhoto]', e);
     return error(res, 'Could not delete photo');
   }
 }
