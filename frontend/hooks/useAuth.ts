@@ -14,14 +14,12 @@ export function useAuth(required = true, adminOnly = false) {
     const token  = getToken();
     const cached = getUser();
 
-    // No token — redirect to login
     if (!token) {
       if (required) router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
       setLoading(false);
       return;
     }
 
-    // Have cached user with role — use it directly, no API call needed
     if (cached && cached.role) {
       if (adminOnly && cached.role !== 'ADMIN') {
         router.replace('/website');
@@ -32,7 +30,6 @@ export function useAuth(required = true, adminOnly = false) {
       return;
     }
 
-    // Token exists but no cached user — verify with backend
     api.get('/auth/me')
       .then(res => {
         const u = res.data.data?.user || res.data.user;
@@ -45,8 +42,6 @@ export function useAuth(required = true, adminOnly = false) {
         setUser(u);
       })
       .catch(() => {
-        // If /auth/me fails but we have a token, try to use cached user
-        // Don't immediately logout — token might still be valid
         if (cached) {
           setUser(cached);
         } else {
