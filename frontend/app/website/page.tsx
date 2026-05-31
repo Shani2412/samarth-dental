@@ -60,7 +60,7 @@ export default function WebsitePage() {
     });
   }, []);
 
-  const phone = process.env.NEXT_PUBLIC_CLINIC_PHONE || '919898001234';
+  const phone = process.env.NEXT_PUBLIC_CLINIC_PHONE || '919033142313';
 
   // mounted check handled inline per element
 
@@ -275,7 +275,7 @@ export default function WebsitePage() {
         <div className="max-w-6xl mx-auto px-5 grid lg:grid-cols-2 gap-12 items-center relative z-10">
           <div>
             <div className="inline-flex items-center gap-2 bg-teal-light text-teal text-xs font-semibold px-4 py-2 rounded-full mb-6">
-              <span>⭐</span> Trusted Dental Clinic — Vijapur, Mehsana
+              <span>⭐</span> Dr. Vrujeshkumar Patel (B.D.S.) — Vijapur
             </div>
             <h1 className="font-display text-5xl lg:text-6xl font-bold leading-tight mb-5">
               Your Smile,<br /><span className="text-teal">Our Priority</span>
@@ -414,9 +414,9 @@ export default function WebsitePage() {
           </div>
           <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-10">
             {[
-              { icon: '📍', title: 'Address', lines: ['20/21 Dev Complex', 'Vijapur–Himmatnagar Highway', 'Near Anandpura Cross Road', 'Vijapur, Gujarat – 384570'] },
-              { icon: '📞', title: 'Phone',   lines: ['+91 98980 01234', 'Mon–Sat: 9am – 7pm', 'Sunday: 10am – 2pm'] },
-              { icon: '📧', title: 'Email',   lines: ['doctor@samarthdental.com', 'We reply within 2 hours', 'Or WhatsApp us anytime'] },
+              { icon: '📍', title: 'Address', lines: ['20/24 Dev Complex', 'Anandpura Char Rasta', 'Vijapur, Gujarat – 384570'] },
+              { icon: '📞', title: 'Phone',   lines: ['+91 90331 42313', 'Morning: 6am – 2pm', 'Evening: 6pm – 9pm'] },
+              { icon: '📧', title: 'Email',   lines: ['virupatel2794@gmail.com', 'We reply within 2 hours', 'Or WhatsApp us anytime'] },
             ].map(c => (
               <div key={c.title} className="text-center p-6 rounded-2xl bg-gray-50 hover:bg-teal-light transition-colors">
                 <div className="text-4xl mb-3">{c.icon}</div>
@@ -430,8 +430,8 @@ export default function WebsitePage() {
               <div className="flex items-center gap-3">
                 <span className="text-2xl">🗺️</span>
                 <div>
-                  <div className="font-semibold text-teal text-sm">Samarth Dental Care</div>
-                  <div className="text-xs text-gray-500">20/21 Dev Complex, Vijapur–Himmatnagar Hwy, Near Anandpura, Vijapur 384570</div>
+                  <div className="font-semibold text-teal text-sm">Samarth Dental Clinic</div>
+                  <div className="text-xs text-gray-500">20/24 Dev Complex, Anandpura Char Rasta, Vijapur 384570</div>
                 </div>
               </div>
               <a href="https://www.google.com/maps/search/20+21+Dev+Complex+Vijapur+Himmatnagar+Highway+near+Anandpura+Vijapur+Gujarat+384570"
@@ -444,7 +444,7 @@ export default function WebsitePage() {
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3667.0!2d72.7567!3d23.5387!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjPCsDMyJzE5LjMiTiA3MsKwNDUnMjQuMSJF!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin&q=20/21+Dev+Complex,+Vijapur+Himmatnagar+Highway,+near+Anandpura,+Vijapur,+Gujarat+384570"
               width="100%" height="420" style={{ border: 0, display: 'block' }} allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
             <div className="bg-gray-50 px-6 py-4 flex flex-wrap gap-3 items-center justify-between">
-              <div className="flex items-center gap-2 text-sm text-gray-500"><span>🚗</span><span>On Vijapur–Himmatnagar Highway, near Anandpura Cross Road</span></div>
+              <div className="flex items-center gap-2 text-sm text-gray-500"><span>🚗</span><span>20/24 Dev Complex, Anandpura Char Rasta, Vijapur</span></div>
               <div className="flex gap-2">
                 <a href={`https://wa.me/${phone}`} target="_blank" rel="noopener noreferrer"
                   className="flex items-center gap-2 bg-green-500 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-green-600 transition-colors">💬 WhatsApp</a>
