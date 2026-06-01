@@ -16,13 +16,9 @@ function LoginForm() {
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect') || '';
 
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginForm>();
-
   useEffect(() => {
-    // Show error if Google login failed
     const error = searchParams.get('error');
     if (error === 'google_failed') toast.error('Google login failed. Please try again.');
-
     const token = getToken();
     if (!token) return;
     try {
@@ -31,14 +27,15 @@ function LoginForm() {
     } catch {}
   }, []);
 
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginForm>();
+
   const onSubmit = async (data: LoginForm) => {
     try {
+      clearAuth();
       const res = await api.post('/auth/login', data);
       const { token, user } = res.data.data;
-      clearAuth(); // clear any old session first
       saveAuth(token, user);
       toast.success(`Welcome back, ${user.name}!`);
-      // Go to redirect URL or default
       router.push(redirect || (user.role === 'ADMIN' ? '/admin' : '/website'));
     } catch (err: any) {
       toast.error(err.response?.data?.message || 'Login failed. Please try again.');
@@ -52,15 +49,11 @@ function LoginForm() {
         <div className="absolute -top-32 -left-32 w-96 h-96 bg-white/5 rounded-full" />
         <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-white/4 rounded-full" />
         <div className="relative z-10 text-center text-white max-w-md">
-          <div className="text-7xl mb-5">🦷</div>
-          <h1 className="font-display text-5xl font-bold mb-3 leading-tight">Samarth<br />Dental Care</h1>
+          <div className="w-24 h-24 bg-white rounded-2xl flex items-center justify-center mx-auto mb-5 overflow-hidden shadow-lg">
+            <img src="/logo.png" alt="Samarth Dental" className="w-20 h-20 object-contain" />
+          </div>
+          <h1 className="font-display text-5xl font-bold mb-3 leading-tight">Samarth<br />Dental Clinic</h1>
           <p className="text-white/75 text-base mb-12 leading-relaxed">Vijapur, Mehsana — Gujarat<br />Your smile, our priority</p>
-          {redirect && (
-            <div className="bg-white/15 rounded-2xl p-5 text-left mb-6">
-              <p className="text-white font-semibold text-sm mb-1">🔒 Login required</p>
-              <p className="text-white/70 text-xs">Login or sign up to continue with your action</p>
-            </div>
-          )}
           <div className="space-y-4 text-left">
             {[
               { icon: '📅', title: 'Easy Booking',  sub: 'Book appointments anytime' },
@@ -78,19 +71,17 @@ function LoginForm() {
             ))}
           </div>
         </div>
-        <p className="absolute bottom-6 text-white/35 text-xs">© 2025 Samarth Dental Care · Vijapur</p>
+        <p className="absolute bottom-6 text-white/35 text-xs">© 2025 Samarth Dental Clinic · Vijapur</p>
       </div>
 
       {/* Right Panel */}
       <div className="w-full lg:w-[480px] flex items-center justify-center p-8 bg-white">
         <div className="w-full max-w-sm">
-          {/* Back to website */}
           <button onClick={() => router.push('/website')}
             className="flex items-center gap-1 text-xs text-gray-400 hover:text-teal transition-colors mb-6">
             ← Back to website
           </button>
 
-          {/* Tabs */}
           <div className="flex bg-gray-100 rounded-xl p-1 mb-8">
             <span className="flex-1 py-2.5 text-center text-sm font-semibold text-teal bg-white rounded-lg shadow-sm">Login</span>
             <Link href={`/signup${redirect ? `?redirect=${encodeURIComponent(redirect)}` : ''}`}
@@ -142,10 +133,8 @@ function LoginForm() {
           </div>
 
           {/* Google Login */}
-          <a
-            href={`${process.env.NEXT_PUBLIC_API_URL}/api/auth/google${redirect ? `?redirect=${encodeURIComponent(redirect)}` : ''}`}
-            className="flex items-center justify-center gap-3 w-full py-3 border border-gray-200 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all"
-          >
+          <a href={`${process.env.NEXT_PUBLIC_API_URL}/api/auth/google${redirect ? `?redirect=${encodeURIComponent(redirect)}` : ''}`}
+            className="flex items-center justify-center gap-3 w-full py-3 border border-gray-200 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all">
             <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
               <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>

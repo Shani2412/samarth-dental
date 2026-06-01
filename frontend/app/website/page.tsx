@@ -20,7 +20,6 @@ const SERVICES = [
   { icon: '🪥', title: 'Tooth Extraction',  desc: 'Safe, comfortable extractions including wisdom teeth removal.' },
   { icon: '🧩', title: 'Dental Implants',   desc: 'Permanent titanium implants for missing teeth — looks real.' },
   { icon: '🍼', title: 'Pediatric Dentistry', desc: 'Gentle, child-friendly dental care for kids of all ages.' },
-  { icon: '🦷', title: 'Missing Teeth Replacement', desc: 'Implants, bridges & dentures to restore your complete smile naturally.' },
 ];
 
 const WHYS = [
@@ -435,21 +434,21 @@ export default function WebsitePage() {
                   <div className="text-xs text-gray-500">20/24 Dev Complex, Anandpura Char Rasta, Vijapur 384570</div>
                 </div>
               </div>
-              <a href="https://www.google.com/maps?q=23.553081,72.751869"
+              <a href="https://www.google.com/maps/search/20+21+Dev+Complex+Vijapur+Himmatnagar+Highway+near+Anandpura+Vijapur+Gujarat+384570"
                 target="_blank" rel="noopener noreferrer"
                 className="flex-shrink-0 bg-teal text-white text-xs font-semibold px-4 py-2 rounded-lg hover:opacity-90 transition-opacity">
                 Open in Maps ↗
               </a>
             </div>
-            <iframe title="Samarth Dental Clinic Location"
-              src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3667.0!2d72.751869!3d23.553081!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMjPCsDMzJzExLjEiTiA3MsKwNDUnMDYuNyJF!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+            <iframe title="Samarth Dental Care Location"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3667.0!2d72.7567!3d23.5387!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjPCsDMyJzE5LjMiTiA3MsKwNDUnMjQuMSJF!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin&q=20/21+Dev+Complex,+Vijapur+Himmatnagar+Highway,+near+Anandpura,+Vijapur,+Gujarat+384570"
               width="100%" height="420" style={{ border: 0, display: 'block' }} allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
             <div className="bg-gray-50 px-6 py-4 flex flex-wrap gap-3 items-center justify-between">
               <div className="flex items-center gap-2 text-sm text-gray-500"><span>🚗</span><span>20/24 Dev Complex, Anandpura Char Rasta, Vijapur</span></div>
               <div className="flex gap-2">
                 <a href={`https://wa.me/${phone}`} target="_blank" rel="noopener noreferrer"
                   className="flex items-center gap-2 bg-green-500 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-green-600 transition-colors">💬 WhatsApp</a>
-                <a href="https://www.google.com/maps/dir/?api=1&destination=23.553081,72.751869"
+                <a href="https://www.google.com/maps/dir/?api=1&destination=20+21+Dev+Complex+Vijapur+Himmatnagar+Highway+Anandpura+Vijapur+Gujarat+384570"
                   target="_blank" rel="noopener noreferrer"
                   className="flex items-center gap-2 bg-teal text-white text-xs font-semibold px-4 py-2 rounded-lg hover:opacity-90 transition-opacity">🧭 Get Directions</a>
               </div>

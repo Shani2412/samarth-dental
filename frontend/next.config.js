@@ -1,31 +1,21 @@
-  /** @type {import('next').NextConfig} */
+/** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Compress responses
-  compress: true,
-
-  // Image optimization
   images: {
-    domains: ['localhost'],
-    formats: ['image/webp', 'image/avif'],
-  },
-
-  async rewrites() {
-    const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
-    return [
-      { source: '/api/:path*',     destination: `${API}/api/:path*`     },
-      { source: '/uploads/:path*', destination: `${API}/uploads/:path*` },
-    ];
-  },
-
-  async headers() {
-    return [
+    // Allow local public folder images + backend uploads
+    remotePatterns: [
       {
-        source: '/uploads/:path*',
-        headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '5000',
+        pathname: '/uploads/**',
       },
+    ],
+  },
+  async rewrites() {
+    return [
       {
         source: '/api/:path*',
-        headers: [{ key: 'Cache-Control', value: 'no-store' }],
+        destination: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/:path*`,
       },
     ];
   },
