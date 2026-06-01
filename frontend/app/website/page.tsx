@@ -20,6 +20,7 @@ const SERVICES = [
   { icon: '🪥', title: 'Tooth Extraction',  desc: 'Safe, comfortable extractions including wisdom teeth removal.' },
   { icon: '🧩', title: 'Dental Implants',   desc: 'Permanent titanium implants for missing teeth — looks real.' },
   { icon: '🍼', title: 'Pediatric Dentistry', desc: 'Gentle, child-friendly dental care for kids of all ages.' },
+  { icon: '🦷', title: 'Missing Teeth Replacement', desc: 'Implants, bridges & dentures to restore your complete smile naturally.' },
 ];
 
 const WHYS = [
