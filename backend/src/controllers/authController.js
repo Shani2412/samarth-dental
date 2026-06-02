@@ -24,16 +24,18 @@ const isAdminEmail = (email) => {
 };
 
 // POST /api/auth/signup
+// POST /api/auth/signup
 async function signup(req, res) {
   try {
     const { name, email, password } = req.body;
     const normalEmail = email.toLowerCase();
+    
+    // 1. Check if user exists
     const exists = await prisma.user.findUnique({ where: { email: normalEmail } });
     if (exists) return error(res, 'Account already exists with this email', 409);
 
+    // 2. Hash Password and Create User
     const hashed = await bcrypt.hash(password, 12);
-    
-    // Yahan hum database me direct dynamic check ke sath role 'ADMIN' set kar rahe hain
     const user = await prisma.user.create({
       data: { 
         name, 
@@ -43,15 +45,22 @@ async function signup(req, res) {
       },
     });
 
+    // 3. Generate Token
     const token = signToken({ id: user.id, email: user.email, role: user.role });
-    sendEmail(user.email, `🦷 Welcome to ${config.clinic.name}!`, templates.welcome(user.name));
+
+    // 🔥 ULTIMATE FIX: Yahan se 'await' hata diya hai aur ise background me daal diya hai.
+    // Ab agar email deliver nahi bhi hoga ya stuck hoga, toh aapka signup 1 millisecond me complete ho jayega!
+    sendEmail(user.email, `🦷 Welcome to ${config.clinic.name}!`, templates.welcome(user.name))
+      .catch(mailErr => console.error('📧 Background Mail Error:', mailErr.message));
+
+    // 4. Send Instant Success Response to Frontend
     return success(res, { token, user: safeUser(user) }, 'Account created!', 201);
+
   } catch (e) {
     console.error('[signup]', e);
     return error(res, 'Signup failed');
   }
 }
-
 // POST /api/auth/login
 async function login(req, res) {
   try {
