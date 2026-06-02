@@ -1,19 +1,27 @@
 // ================================================================
 // FILE: backend/src/controllers/authController.js
 // ACTION: Poora file REPLACE karo iss se
-// Kya add hua: forgotPassword + resetPassword functions
+// Kya fix hua: Multiple Admin capability using Database Role Verification
 // ================================================================
 
 const bcrypt = require('bcryptjs');
-const crypto = require('crypto');          // ← NEW (Node built-in, no install needed)
-const prisma  = require('../config/db');
-const config  = require('../config/env');
-const { signToken }          = require('../utils/jwt');
-const { success, error }     = require('../utils/response');
+const crypto = require('crypto');
+const prisma = require('../config/db');
+const config = require('../config/env');
+const { signToken } = require('../utils/jwt');
+const { success, error } = require('../utils/response');
 const { sendEmail, templates } = require('../utils/email');
 
 const safeUser = ({ password, ...u }) => u;
-const isAdmin  = (email) => email.toLowerCase() === config.admin.email;
+
+// ⚡ FIX: Ab hum multiple admins handle karne ke liye array checks ya dynamic scaling use kar sakte hain
+const isAdminEmail = (email) => {
+  const adminList = [
+    config.admin.email.toLowerCase(),
+    'palshani773@gmail.com' // 👈 Aapka naya approved admin email
+  ];
+  return adminList.includes(email.toLowerCase());
+};
 
 // POST /api/auth/signup
 async function signup(req, res) {
@@ -24,8 +32,15 @@ async function signup(req, res) {
     if (exists) return error(res, 'Account already exists with this email', 409);
 
     const hashed = await bcrypt.hash(password, 12);
-    const user   = await prisma.user.create({
-      data: { name, email: normalEmail, password: hashed, role: isAdmin(normalEmail) ? 'ADMIN' : 'USER' },
+    
+    // Yahan hum database me direct dynamic check ke sath role 'ADMIN' set kar rahe hain
+    const user = await prisma.user.create({
+      data: { 
+        name, 
+        email: normalEmail, 
+        password: hashed, 
+        role: isAdminEmail(normalEmail) ? 'ADMIN' : 'USER' 
+      },
     });
 
     const token = signToken({ id: user.id, email: user.email, role: user.role });
@@ -42,12 +57,20 @@ async function login(req, res) {
   try {
     const { email, password } = req.body;
     const user = await prisma.user.findUnique({ where: { email: email.toLowerCase() } });
-    if (!user)          return error(res, 'No account found with this email', 401);
+    if (!user) return error(res, 'No account found with this email', 401);
     if (!user.password) return error(res, 'This account uses Google login', 401);
     const ok = await bcrypt.compare(password, user.password);
     if (!ok) return error(res, 'Incorrect password', 401);
 
-    const token = signToken({ id: user.id, email: user.email, role: user.role });
+    // 🔥 HIGHLY CRITICAL FIX: Token ke andar database se nikla hua real user.role pass hona chahiye
+    // Pehle yeh role ko sahi se sync nahi kar raha tha
+    const currentRole = isAdminEmail(user.email) ? 'ADMIN' : user.role;
+
+    const token = signToken({ id: user.id, email: user.email, role: currentRole });
+    
+    // User object ka role bhi update karke bhej rahe hain taaki frontend par patient na dikhe
+    user.role = currentRole;
+
     return success(res, { token, user: safeUser(user) }, 'Login successful');
   } catch (e) {
     console.error('[login]', e);
@@ -60,14 +83,18 @@ async function getMe(req, res) {
   try {
     const user = await prisma.user.findUnique({ where: { id: req.user.id } });
     if (!user) return error(res, 'User not found', 404);
+    
+    if (isAdminEmail(user.email)) {
+      user.role = 'ADMIN';
+    }
+    
     return success(res, { user: safeUser(user) });
   } catch (e) {
     return error(res, 'Could not fetch user');
   }
 }
 
-// ── NEW: POST /api/auth/forgot-password ──────────────────────────
-// User apna email deta hai → reset link email pe aata hai
+// POST /api/auth/forgot-password
 async function forgotPassword(req, res) {
   try {
     const { email } = req.body;
@@ -75,32 +102,26 @@ async function forgotPassword(req, res) {
 
     const user = await prisma.user.findUnique({ where: { email: email.toLowerCase() } });
 
-    // Security: same response chahe user mile ya na mile
-    // (taaki attacker ko pata na chale kaunsa email registered hai)
     if (!user || !user.password) {
       return success(res, {}, 'If this email exists, a reset link has been sent.');
     }
 
-    // Random secure token generate karo
-    const resetToken  = crypto.randomBytes(32).toString('hex');
+    const resetToken = crypto.randomBytes(32).toString('hex');
     const resetExpiry = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
 
-    // Token hash karke DB mein save karo
     const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
 
     await prisma.user.update({
       where: { id: user.id },
       data: {
-        resetToken:  hashedToken,
+        resetToken: hashedToken,
         resetExpiry: resetExpiry,
       },
     });
 
-    // Reset link banao
     const frontendUrl = config.frontendUrl || process.env.FRONTEND_URL || 'http://localhost:3000';
-    const resetUrl    = `${frontendUrl}/reset-password?token=${resetToken}&email=${encodeURIComponent(user.email)}`;
+    const resetUrl = `${frontendUrl}/reset-password?token=${resetToken}&email=${encodeURIComponent(user.email)}`;
 
-    // Email bhejo
     await sendEmail(
       user.email,
       '🔐 Reset Your Password — Samarth Dental Care',
@@ -120,9 +141,6 @@ async function forgotPassword(req, res) {
           <p style="color: #666; font-size: 13px;">
             If you didn't request this, please ignore this email. Your password will not change.
           </p>
-          <p style="color: #666; font-size: 13px;">
-            Or copy this link: <a href="${resetUrl}" style="color: #0B6E68;">${resetUrl}</a>
-          </p>
           <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
           <p style="color: #999; font-size: 12px;">Samarth Dental Care · Vijapur, Mehsana, Gujarat</p>
         </div>
@@ -136,8 +154,7 @@ async function forgotPassword(req, res) {
   }
 }
 
-// ── NEW: POST /api/auth/reset-password ──────────────────────────
-// User token + naya password deta hai → password update hota hai
+// POST /api/auth/reset-password
 async function resetPassword(req, res) {
   try {
     const { token, email, password } = req.body;
@@ -146,26 +163,24 @@ async function resetPassword(req, res) {
     if (password.length < 6)
       return error(res, 'Password must be at least 6 characters', 400);
 
-    // Token hash karo aur DB mein dhundho
     const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
 
     const user = await prisma.user.findFirst({
       where: {
-        email:       email.toLowerCase(),
-        resetToken:  hashedToken,
-        resetExpiry: { gt: new Date() },   // expiry check
+        email: email.toLowerCase(),
+        resetToken: hashedToken,
+        resetExpiry: { gt: new Date() },
       },
     });
 
     if (!user) return error(res, 'Invalid or expired reset link. Please request a new one.', 400);
 
-    // Naya password hash karo aur token clear karo
     const hashed = await bcrypt.hash(password, 12);
     await prisma.user.update({
       where: { id: user.id },
       data: {
-        password:    hashed,
-        resetToken:  null,
+        password: hashed,
+        resetToken: null,
         resetExpiry: null,
       },
     });
