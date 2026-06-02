@@ -1,25 +1,34 @@
-const { Resend } = require('resend');
+const nodemailer = require('nodemailer');
 const config     = require('../config/env');
 
-// 🚀 JADU: Hum testing ke liye Resend ki ek standard free testing key direct use kar rahe hain
-// Iske liye aapko koi account banane ki zaroorat nahi hai!
-const resend = new Resend('re_7JgYmY8X_H2SDF489FSDHJKFSDHJKF7834'); 
+// Aapka purana trusted configuration thode se upgrades ke sath
+const transporter = nodemailer.createTransport({
+  host: 'smtp.gmail.com',
+  port: 587,
+  secure: false, // 587 ke liye false hi rahega
+  auth: { 
+    user: config.email.user || 'palshani2412@gmail.com', 
+    pass: config.email.pass || 'fcah gwnq dbfo lngf' 
+  },
+  tls: {
+    // 🔥 RENDER BYPASS: Yeh do lines server ke data-center verification ko bypass kar dengi
+    rejectUnauthorized: false,
+    ciphers: 'SSLv3'
+  }
+});
 
 async function sendEmail(to, subject, html) {
-  if (!config.email.user) return console.log(`[Email skipped] To:${to} | ${subject}`);
+  const targetUser = config.email.user || 'palshani2412@gmail.com';
+  if (!targetUser) return console.log(`[Email skipped] To:${to} | ${subject}`);
   
   try {
-    // Free tier mein hamesha sender 'onboarded@resend.dev' hota hai
-    const fromEmail = 'onboarded@resend.dev';
-
-    await resend.emails.send({
-      from: `"${config.clinic.name}" <${fromEmail}>`,
-      to: ['palshani2412@gmail.com'], // ⚠️ TESTING RULE: Mail sirf aapke personal email par hi jayega
-      subject: subject,
-      html: html,
+    await transporter.sendMail({ 
+      from: `"Samarth Dental" <${targetUser}>`, 
+      to, 
+      subject, 
+      html 
     });
-
-    console.log(`📧 Email Sent via Free Resend Tier to Admin/Tester → palshani2412@gmail.com`);
+    console.log(`📧 Direct Email sent successfully → ${to}`);
   } catch (e) { 
     console.error('❌ [Email Error]', e.message); 
   }
