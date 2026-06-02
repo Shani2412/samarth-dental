@@ -1,4 +1,10 @@
 'use client';
+// ================================================================
+// FILE: frontend/app/login/page.tsx
+// ACTION: Poora file REPLACE karo iss se
+// Kya add hua: "Forgot password?" link password field ke neeche
+// ================================================================
+
 import { useState, useEffect, Suspense } from 'react';
 import { useForm } from 'react-hook-form';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -94,6 +100,7 @@ function LoginForm() {
           <p className="text-gray-500 text-sm mb-7">Login to manage your appointments</p>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            {/* Email */}
             <div>
               <label className="block text-xs font-semibold text-gray-600 mb-1.5">Email Address</label>
               <div className="relative">
@@ -105,6 +112,7 @@ function LoginForm() {
               {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
             </div>
 
+            {/* Password */}
             <div>
               <label className="block text-xs font-semibold text-gray-600 mb-1.5">Password</label>
               <div className="relative">
@@ -118,6 +126,13 @@ function LoginForm() {
                 </button>
               </div>
               {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
+
+              {/* ── Forgot Password Link ── */}
+              <div className="text-right mt-1">
+                <Link href="/forgot-password" className="text-xs text-teal hover:underline">
+                  Forgot password?
+                </Link>
+              </div>
             </div>
 
             <button type="submit" disabled={isSubmitting} className="btn-teal w-full py-3 rounded-xl text-base mt-2">
