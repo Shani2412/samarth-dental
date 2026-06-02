@@ -1,61 +1,79 @@
-const nodemailer = require('nodemailer');
-const config     = require('../config/env');
+const { Resend } = require('resend');
 
-// Aapka purana trusted configuration thode se upgrades ke sath
-const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 587,
-  secure: false, // 587 ke liye false hi rahega
-  auth: { 
-    user: config.email.user || 'palshani2412@gmail.com', 
-    pass: config.email.pass || 'fcah gwnq dbfo lngf' 
-  },
-  tls: {
-    // 🔥 RENDER BYPASS: Yeh do lines server ke data-center verification ko bypass kar dengi
-    rejectUnauthorized: false,
-    ciphers: 'SSLv3'
-  }
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
+const FROM   = 'Samarth Dental Clinic <onboarding@resend.dev>';
+const CLINIC = process.env.CLINIC_EMAIL || 'virupatel2794@gmail.com';
 
 async function sendEmail(to, subject, html) {
-  const targetUser = config.email.user || 'palshani2412@gmail.com';
-  if (!targetUser) return console.log(`[Email skipped] To:${to} | ${subject}`);
-  
+  if (!process.env.RESEND_API_KEY) {
+    console.log('[Email] RESEND_API_KEY not set — skipping');
+    return;
+  }
   try {
-    await transporter.sendMail({ 
-      from: `"Samarth Dental" <${targetUser}>`, 
-      to, 
-      subject, 
-      html 
-    });
-    console.log(`📧 Direct Email sent successfully → ${to}`);
-  } catch (e) { 
-    console.error('❌ [Email Error]', e.message); 
+    const { data, error } = await resend.emails.send({ from: FROM, to, subject, html });
+    if (error) console.error('[Email Error]', error);
+    else console.log('[Email] Sent to', to);
+    return data;
+  } catch (e) {
+    console.error('[Email Error]', e.message);
   }
 }
 
 const templates = {
-  welcome: (name) => `
-    <div style="font-family:sans-serif;max-width:540px;margin:0 auto">
-      <div style="background:#0B6E68;padding:28px 32px;border-radius:12px 12px 0 0;text-align:center">
-        <h1 style="color:white;margin:0;font-size:24px">🦷 Welcome to Samarth Dental!</h1>
+  appointmentConfirmed: (name, service, date, time) => ({
+    subject: '✅ Appointment Confirmed — Samarth Dental Clinic',
+    html: `
+      <div style="font-family:sans-serif;max-width:500px;margin:auto;padding:24px">
+        <h2 style="color:#0B6E68">Appointment Confirmed! 🦷</h2>
+        <p>Dear <strong>${name}</strong>,</p>
+        <p>Your appointment has been confirmed.</p>
+        <div style="background:#f0faf9;border-radius:12px;padding:16px;margin:16px 0">
+          <p><strong>Service:</strong> ${service}</p>
+          <p><strong>Date:</strong> ${date || 'TBD'}</p>
+          <p><strong>Time:</strong> ${time || 'TBD'}</p>
+        </div>
+        <p>📍 20/24 Dev Complex, Anandpura Char Rasta, Vijapur</p>
+        <p>📞 +91 90331 42313</p>
+        <p style="color:#888;font-size:12px">— Samarth Dental Clinic, Vijapur</p>
       </div>
-      <div style="padding:28px 32px;background:white;border-radius:0 0 12px 12px;border:1px solid #E2E8F0">
-        <p style="font-size:15px">Dear <strong>${name}</strong>, your account is ready!</p>
-        <p style="font-size:14px;color:#718096">Book appointments from your dashboard.</p>
-      </div>
-    </div>`,
+    `,
+  }),
 
-  appointmentReceived: (name, service, date, time) => `
-    <div style="font-family:sans-serif;max-width:540px;margin:0 auto">
-      <div style="background:#0B6E68;padding:24px 32px;border-radius:12px 12px 0 0">
-        <h1 style="color:white;margin:0;font-size:20px">✅ Request Received</h1>
+  appointmentReceived: (name, service, date, time) => ({
+    subject: '📅 Booking Received — Samarth Dental Clinic',
+    html: `
+      <div style="font-family:sans-serif;max-width:500px;margin:auto;padding:24px">
+        <h2 style="color:#0B6E68">Booking Received! 🦷</h2>
+        <p>Dear <strong>${name}</strong>,</p>
+        <p>We have received your appointment request.</p>
+        <div style="background:#f0faf9;border-radius:12px;padding:16px;margin:16px 0">
+          <p><strong>Service:</strong> ${service}</p>
+          <p><strong>Date:</strong> ${date || 'TBD'}</p>
+          <p><strong>Time:</strong> ${time || 'TBD'}</p>
+        </div>
+        <p>We will confirm your appointment shortly.</p>
+        <p style="color:#888;font-size:12px">— Samarth Dental Clinic, Vijapur</p>
       </div>
-      <div style="padding:24px 32px;background:white;border-radius:0 0 12px 12px;border:1px solid #E2E8F0">
-        <p style="font-size:15px">Dear <strong>${name}</strong>,</p>
-        <p style="font-size:14px">We received your request for ${service}.</p>
+    `,
+  }),
+
+  passwordReset: (name, resetUrl) => ({
+    subject: '🔐 Reset Your Password — Samarth Dental Clinic',
+    html: `
+      <div style="font-family:sans-serif;max-width:500px;margin:auto;padding:24px">
+        <h2 style="color:#0B6E68">Reset Your Password 🔐</h2>
+        <p>Dear <strong>${name}</strong>,</p>
+        <p>Click the button below to reset your password. This link expires in <strong>15 minutes</strong>.</p>
+        <div style="text-align:center;margin:24px 0">
+          <a href="${resetUrl}" style="background:#0B6E68;color:white;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:bold;display:inline-block">
+            Reset Password
+          </a>
+        </div>
+        <p style="color:#888;font-size:12px">If you didn't request this, ignore this email.</p>
+        <p style="color:#888;font-size:12px">— Samarth Dental Clinic, Vijapur</p>
       </div>
-    </div>`,
+    `,
+  }),
 };
 
 module.exports = { sendEmail, templates };
