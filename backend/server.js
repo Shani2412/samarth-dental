@@ -10,11 +10,14 @@ const { seedAdmin }  = require('./src/controllers/authController');
 
 const app = express();
 
+app.set('trust proxy', 1);
+
 // ── Ensure uploads folder exists ──
 const uploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
 
 // ── Middleware ──
+// Render/production proxy trust
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 app.use(cors({
   origin:         config.frontendUrl,
