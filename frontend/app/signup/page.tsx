@@ -33,7 +33,7 @@ export default function SignupPage() {
     { label: 'Fair',        color: 'bg-orange-400'  },
     { label: 'Good',        color: 'bg-yellow-400'  },
     { label: 'Strong',      color: 'bg-green-500'   },
-    { label: 'Very Strong', color: 'bg-teal'        },
+    { label: 'Very Strong', color: 'bg-teal-600'    }, // 🔥 FIXED: Added intensity number
   ];
 
   const onSubmit = async (data: SignupForm) => {
@@ -52,7 +52,8 @@ export default function SignupPage() {
   return (
     <div className="min-h-screen flex">
       {/* Left Panel */}
-      <div className="hidden lg:flex flex-1 bg-teal flex-col justify-center items-center p-16 relative overflow-hidden">
+      {/* 🔥 FIXED: Replaced bg-teal with custom brand color hex code match */}
+      <div className="hidden lg:flex flex-1 bg-[#0B6E68] flex-col justify-center items-center p-16 relative overflow-hidden">
         <div className="absolute -top-32 -left-32 w-96 h-96 bg-white/5 rounded-full" />
         <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-white/4 rounded-full" />
         <div className="relative z-10 text-center text-white max-w-md">
@@ -87,7 +88,8 @@ export default function SignupPage() {
             <Link href="/login" className="flex-1 py-2.5 text-center text-sm font-medium text-gray-400 hover:text-gray-600 transition-colors">
               Login
             </Link>
-            <span className="flex-1 py-2.5 text-center text-sm font-semibold text-teal bg-white rounded-lg shadow-sm">
+            {/* 🔥 FIXED: Text color dynamic mapping standard */}
+            <span className="flex-1 py-2.5 text-center text-sm font-semibold text-teal-600 bg-white rounded-lg shadow-sm">
               Sign Up
             </span>
           </div>
@@ -185,7 +187,7 @@ export default function SignupPage() {
 
           <p className="text-center text-xs text-gray-500 mt-5">
             Already have an account?{' '}
-            <Link href="/login" className="text-teal font-semibold hover:underline">Login</Link>
+            <Link href="/login" className="text-teal-600 font-semibold hover:underline">Login</Link>
           </p>
         </div>
       </div>
