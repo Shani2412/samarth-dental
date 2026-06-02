@@ -1,17 +1,33 @@
 const nodemailer = require('nodemailer');
 const config     = require('../config/env');
 
+// Purana working method jisme port ko manually set kiya jata hai
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: { user: config.email.user, pass: config.email.pass },
+  host: 'smtp.gmail.com',
+  port: 587,             // Yeh port Render par kayi baar bypass ho jata hai
+  secure: false,         // 465 ke liye true hota hai, 587 ke liye false
+  auth: { 
+    user: config.email.user, 
+    pass: config.email.pass 
+  },
+  tls: {
+    rejectUnauthorized: false // Security warning ko bypass karne ke liye (important)
+  }
 });
 
 async function sendEmail(to, subject, html) {
   if (!config.email.user) return console.log(`[Email skipped] To:${to} | ${subject}`);
   try {
-    await transporter.sendMail({ from: `"${config.clinic.name}" <${config.email.user}>`, to, subject, html });
-    console.log(`📧 Email → ${to}`);
-  } catch (e) { console.error('[Email Error]', e.message); }
+    await transporter.sendMail({ 
+      from: `"${config.clinic.name}" <${config.email.user}>`, 
+      to, 
+      subject, 
+      html 
+    });
+    console.log(`📧 Email sent using direct Gmail configuration → ${to}`);
+  } catch (e) { 
+    console.error('[Email Error]', e.message); 
+  }
 }
 
 const templates = {
@@ -73,7 +89,7 @@ const templates = {
           <tr><td style="padding:8px;color:#718096">Service</td><td style="padding:8px;font-weight:600;color:#0B6E68">${p.service}</td></tr>
           <tr style="background:#F9FAFB"><td style="padding:8px;color:#718096">Date</td><td style="padding:8px">${p.date || '—'}</td></tr>
           <tr><td style="padding:8px;color:#718096">Time</td><td style="padding:8px">${p.time || '—'}</td></tr>
-          ${p.message ? `<tr style="background:#F9FAFB"><td style="padding:8px;color:#718096">Note</td><td style="padding:8px">${p.message}</td></tr>` : ''}
+          \${p.message ? \`<tr style="background:#F9FAFB"><td style="padding:8px;color:#718096">Note</td><td style="padding:8px">\${p.message}</td></tr>\` : ''}
         </table>
       </div>
     </div>`,
