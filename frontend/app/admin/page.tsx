@@ -67,7 +67,7 @@ export default function AdminDashboard() {
             {new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
           </p>
         </div>
-        <a href="/website" target="https://www.samarthdentalcare.in"
+        <a href="/website" target="_blank"
           className="text-xs border border-gray-200 bg-white px-3 py-2 rounded-lg hover:border-teal hover:text-teal transition-all">
           🌐 View Website
         </a>
