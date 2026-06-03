@@ -4,7 +4,7 @@ import Cookies from 'js-cookie';
 // ✅ FORCE FIXED: Ab yeh environment variable ke jhanjhat par depend nahi karega.
 // Yeh directly port 5000 aur /api par hit karega, jisse 404 error aana band ho jayega.
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api', 
+  baseURL: 'https://samarth-dental-backend-ils2.onrender.com/api', 
   headers: { 'Content-Type': 'application/json' },
   timeout: 15000,
 });
