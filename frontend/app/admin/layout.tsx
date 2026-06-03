@@ -1,6 +1,7 @@
 'use client';
 import { useAuth } from '@/hooks/useAuth';
 import AppSidebar, { SidebarProvider, useSidebar, NavGroup } from '@/components/ui/AppSidebar';
+import Link from 'next/link'; // ✅ Next.js client router import kiya
 import {
   LayoutDashboard, Calendar, Star,
   Users, Camera, FileText,
@@ -48,12 +49,14 @@ function AdminContent({ children }: { children: React.ReactNode }) {
             weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
           })}
         </p>
-        <a
-          href="https://www.samarthdentalcare.in"
+        
+        {/* ✅ FIX: Dynamic Relative Link — Isse same tab me website khulegi aur logout BHI nahi hoga */}
+        <Link
+          href="/website"
           className="text-xs text-teal hover:underline font-medium"
         >
           🌐 View Website →
-        </a>
+        </Link>
       </div>
 
       {/* Page content */}
