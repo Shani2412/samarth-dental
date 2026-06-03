@@ -10,18 +10,21 @@ const resend = new Resend(process.env.RESEND_API_KEY || 're_123456789');
 
 async function sendEmail(to, subject, html) {
   try {
-    // Aapka purana setup jisme custom domain verified tha aur sabko mail jata tha
     const data = await resend.emails.send({
-      from: 'Samarth Dental <no-reply@samarthdentalcare.in>', // Aapka verified domain domain
+      from: 'Samarth Dental <no-reply@samarthdentalcare.in>',
       to: to.toLowerCase().trim(),
       subject: subject,
       html: html,
     });
-    
-    console.log(`📧 Resend Success: Link sent to ${to}`);
+
+    console.log('====================');
+    console.log('RESEND RESPONSE:', data);
+    console.log('EMAIL TO:', to);
+    console.log('====================');
+
     return data;
   } catch (e) {
-    console.error('❌ Resend API Error:', e.message);
+    console.error('❌ RESEND FULL ERROR:', e);
     throw e;
   }
 }
