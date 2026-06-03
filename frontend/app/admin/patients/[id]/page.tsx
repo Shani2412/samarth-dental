@@ -23,7 +23,7 @@ interface Patient {
 }
 
 const TREATMENTS = [
-  'Teeth Cleaning', 'Teeth Whitening', 'Root Canal (RCT)',
+  'Teeth Cleaning','Missing teeth replacement', 'Teeth Whitening', 'Root Canal (RCT)',
   'Dental Crown', 'Tooth Extraction', 'Braces Adjustment',
   'Clear Aligner Fitting', 'Dental Implant', 'Dental Filling',
   'Scaling & Polishing', 'X-Ray', 'Consultation', 'Other',
