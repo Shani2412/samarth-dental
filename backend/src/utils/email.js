@@ -1,37 +1,39 @@
 // ================================================================
 // FILE: backend/src/utils/email.js
-// ACTION: Nodemailer hatao aur Resend ko wapas active karo
+// ACTION: Purane working Resend code ko bina badle sahi format me export karo
 // ================================================================
 
-// Agar aapne resend package install kiya hua h (npm i resend)
 const { Resend } = require('resend');
 
-// Aapki resend key `.env` se uthayega, nahi toh fallback local testing key
-const resendKey = process.env.RESEND_API_KEY || 're_123456789'; 
-const resend = new Resend(resendKey);
+// Dashboard ya env se jo bhi key h, direct fetch hogi
+const resend = new Resend(process.env.RESEND_API_KEY || 're_123456789');
 
 async function sendEmail(to, subject, html) {
   try {
-    // Resend free tier par sirf "onboarding@resend.dev" se hi mail ja sakta hai
-    // Jab tak aap apna domain verify nahi karte
+    // Aapka purana setup jisme custom domain verified tha aur sabko mail jata tha
     const data = await resend.emails.send({
-      from: 'Samarth Dental <onboarding@resend.dev>',
+      from: 'Samarth Dental <no-reply@samarthdentalcare.in>', // Aapka verified domain domain
       to: to.toLowerCase().trim(),
       subject: subject,
       html: html,
     });
     
-    console.log(`📧 Resend API Success: Email sent to ${to}`, data);
+    console.log(`📧 Resend Success: Link sent to ${to}`);
     return data;
   } catch (e) {
-    console.error('❌ [Resend Live Error]:', e.message);
+    console.error('❌ Resend API Error:', e.message);
     throw e;
   }
 }
 
+// Templates object jo authController mang raha h
 const templates = {
-  welcome: (name) => `<h3>Welcome ${name} to Samarth Dental!</h3>`,
+  welcome: (name) => `
+    <div style="font-family:sans-serif;max-width:540px;margin:0 auto">
+      <h1 style="color:#0B6E68;">🦷 Welcome to Samarth Dental!</h1>
+      <p>Dear <strong>${name}</strong>, your account is ready!</p>
+    </div>`,
 };
 
-// Mismatch fix: Object format me hi export rahega
+// 🚨 CRITICAL MATCH: Object export taaki authController me destructing fail na ho
 module.exports = { sendEmail, templates };
