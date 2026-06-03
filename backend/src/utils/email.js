@@ -1,24 +1,24 @@
 // ================================================================
 // FILE: backend/src/utils/email.js
-// ACTION: Poora file mita kar iss se REPLACE karo
+// ACTION: Transporter configuration ko upgrade karo (Port 465 SSL)
 // ================================================================
 
 const nodemailer = require('nodemailer');
 
-// Live Render Environment Variables se direct fetch karenge
 const smtpUser = process.env.EMAIL_USER || 'palshani2412@gmail.com';
 const smtpPass = process.env.EMAIL_PASS || 'fcah gwnq dbfo lngf';
 
+// ⚡ PRODUCTION FIX: Upgraded to Port 465 (SSL) to bypass Render's Port 587 block
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
-  port: 587,
-  secure: false, // STARTTLS ke liye false hi rahega
+  port: 465,         // 🔐 Port 587 block hai, isliye 465 use kar rahe hain
+  secure: true,      // 465 ke liye secure hamesha true rahega
   auth: { 
     user: smtpUser, 
     pass: smtpPass
   },
   tls: {
-    rejectUnauthorized: false
+    rejectUnauthorized: false // Local aur live server compatibility ke liye
   }
 });
 
@@ -56,5 +56,4 @@ const templates = {
     </div>`,
 };
 
-// 🚨 CRITICAL FIX: Object format me hi export karna h taaki authController me destructing fail na ho!
 module.exports = { sendEmail, templates };
