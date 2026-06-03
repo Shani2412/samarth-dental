@@ -49,7 +49,7 @@ function AdminContent({ children }: { children: React.ReactNode }) {
           })}
         </p>
         <a
-          href="http://localhost:3000/website"
+          href="https://www.samarthdentalcare.in/website"
           target="_blank"
           className="text-xs text-teal hover:underline font-medium"
         >
