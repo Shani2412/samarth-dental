@@ -11,7 +11,7 @@ const resend = new Resend(process.env.RESEND_API_KEY || 're_123456789');
 async function sendEmail(to, subject, html) {
   try {
     const data = await resend.emails.send({
-      from: 'Samarth Dental <onboarding@resend.dev>',
+      from: 'Samarth Dental <no-reply@samarthdentalcare.in>'
       to: to.toLowerCase().trim(),
       subject: subject,
       html: html,
