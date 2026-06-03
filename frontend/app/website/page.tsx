@@ -295,7 +295,7 @@ export default function WebsitePage() {
               </a>
             </div>
             <div className="flex items-center gap-6 mt-10 pt-6 border-t border-gray-100">
-              {[['500+','Happy Patients'],['10+','Years Experience'],['4.9★','Rating']].map(([val, label]) => (
+              {[['3000+','Happy Patients'],['10+','Years Experience'],['4.9★','Rating']].map(([val, label]) => (
                 <div key={label}>
                   <div className="font-display text-2xl font-bold text-teal">{val}</div>
                   <div className="text-xs text-gray-400">{label}</div>
@@ -415,7 +415,7 @@ export default function WebsitePage() {
           </div>
           <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-10">
             {[
-              { icon: '📍', title: 'Address', lines: ['20/24 Dev Complex', 'Anandpura Char Rasta', 'Vijapur, Gujarat – 384570'] },
+              { icon: '📍', title: 'Address', lines: ['20/21 Dev Complex', 'Anandpura Char Rasta', 'Vijapur, Gujarat – 384570'] },
               { icon: '📞', title: 'Phone',   lines: ['+91 90331 42313', 'Morning: 6am – 2pm', 'Evening: 6pm – 9pm'] },
               { icon: '📧', title: 'Email',   lines: ['virupatel2794@gmail.com', 'We reply within 2 hours', 'Or WhatsApp us anytime'] },
             ].map(c => (
@@ -432,7 +432,7 @@ export default function WebsitePage() {
                 <span className="text-2xl">🗺️</span>
                 <div>
                   <div className="font-semibold text-teal text-sm">Samarth Dental Clinic</div>
-                  <div className="text-xs text-gray-500">20/24 Dev Complex, Anandpura Char Rasta, Vijapur 384570</div>
+                  <div className="text-xs text-gray-500">20/21 Dev Complex, Anandpura Char Rasta, Vijapur 384570</div>
                 </div>
               </div>
               <a href="https://www.google.com/maps/search/20+21+Dev+Complex+Vijapur+Himmatnagar+Highway+near+Anandpura+Vijapur+Gujarat+384570"
@@ -445,7 +445,7 @@ export default function WebsitePage() {
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3667.0!2d72.7567!3d23.5387!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjPCsDMyJzE5LjMiTiA3MsKwNDUnMjQuMSJF!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin&q=20/21+Dev+Complex,+Vijapur+Himmatnagar+Highway,+near+Anandpura,+Vijapur,+Gujarat+384570"
               width="100%" height="420" style={{ border: 0, display: 'block' }} allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
             <div className="bg-gray-50 px-6 py-4 flex flex-wrap gap-3 items-center justify-between">
-              <div className="flex items-center gap-2 text-sm text-gray-500"><span>🚗</span><span>20/24 Dev Complex, Anandpura Char Rasta, Vijapur</span></div>
+              <div className="flex items-center gap-2 text-sm text-gray-500"><span>🚗</span><span>20/21 Dev Complex, Anandpura Char Rasta, Vijapur</span></div>
               <div className="flex gap-2">
                 <a href={`https://wa.me/${phone}`} target="_blank" rel="noopener noreferrer"
                   className="flex items-center gap-2 bg-green-500 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-green-600 transition-colors">💬 WhatsApp</a>
