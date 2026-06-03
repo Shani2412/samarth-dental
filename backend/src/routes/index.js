@@ -1,7 +1,6 @@
 // ================================================================
 // FILE: backend/src/routes/index.js
-// ACTION: Poora file REPLACE karo iss se
-// Kya add hua: 2 naye routes — forgot-password + reset-password
+// ACTION: Poori file mita kar yeh 100% full production code daalo
 // ================================================================
 
 const router = require('express').Router();
@@ -22,7 +21,7 @@ router.post('/auth/signup', authLimiter, signupRules, validate, auth.signup);
 router.post('/auth/login',  authLimiter, loginRules,  validate, auth.login);
 router.get('/auth/me',      authenticate, auth.getMe);
 
-// ── NEW: Forgot / Reset Password ──
+// ── Forgot / Reset Password ──
 router.post('/auth/forgot-password', authLimiter, auth.forgotPassword);
 router.post('/auth/reset-password',  auth.resetPassword);
 
@@ -59,12 +58,12 @@ router.delete('/admin/reviews/:id', requireAdmin, other.deleteReview);
 router.get('/my-record', authenticate, patient.myRecord);
 
 // ── Patient Records (admin) ──
-router.get('/admin/patients',                       requireAdmin, patient.getAllPatients);
-router.get('/admin/patients/:id',                   requireAdmin, patient.getPatient);
-router.put('/admin/patients/:id/record',            requireAdmin, patient.upsertRecord);
-router.post('/admin/patients/:id/visits',           requireAdmin, patient.addVisit);
+router.get('/admin/patients',                   requireAdmin, patient.getAllPatients);
+router.get('/admin/patients/:id',               requireAdmin, patient.getPatient);
+router.put('/admin/patients/:id/record',        requireAdmin, patient.upsertRecord);
+router.post('/admin/patients/:id/visits',       requireAdmin, patient.addVisit);
 router.patch('/admin/patients/:id/visits/:visitId', requireAdmin, patient.updateVisit);
-router.delete('/admin/patients/:id/visits/:visitId',requireAdmin, patient.deleteVisit);
+router.delete('/admin/patients/:id/visits/:visitId', requireAdmin, patient.deleteVisit);
 
 // ── Admin stats & users ──
 router.get('/admin/stats',   requireAdmin, other.getStats);
@@ -80,4 +79,5 @@ router.get('/admin/photos',         requireAdmin, photo.getAllPhotos);
 router.patch('/admin/photos/:id',   requireAdmin, photo.updatePhoto);
 router.delete('/admin/photos/:id',  requireAdmin, photo.deletePhoto);
 
+// 🚨 SABSE CRITICAL: Yeh export line miss nahi honi chahiye!
 module.exports = router;

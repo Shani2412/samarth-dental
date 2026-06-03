@@ -17,14 +17,31 @@ const uploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
 
 // ── Middleware ──
-// Render/production proxy trust
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
+
+// ⚡ ULTIMATE PRODUCTION FIX: Smart Multi-Origin CORS Setup
+const allowedOrigins = [
+  'http://localhost:3000',                     // 💻 Localhost Testing ke liye
+  'https://www.samarthdentalcare.in',          // 🌐 Live Website (with www)
+  'https://samarthdentalcare.in',              // 🌐 Live Website (without www)
+  config.frontendUrl                           // 🛠️ Safe fallback (jo bhi env me ho)
+];
+
 app.use(cors({
-  origin:         config.frontendUrl,
-  credentials:    true,
+  origin: function (origin, callback) {
+    // Agar request postman/uptime robot se ho (!origin) ya hamari allowed list me ho
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.error(`🚨 CORS Blocked for: ${origin}`);
+      callback(new Error('Not allowed by CORS Security Policy'));
+    }
+  },
+  credentials:  true,
   methods:        ['GET','POST','PATCH','DELETE','OPTIONS'],
   allowedHeaders: ['Content-Type','Authorization'],
 }));
+
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan(config.isProduction ? 'combined' : 'dev'));
@@ -70,7 +87,7 @@ async function start() {
       console.log(`🚀  http://localhost:${config.port}`);
       console.log(`📁  Uploads: http://localhost:${config.port}/uploads/`);
       console.log(`📋  Health: http://localhost:${config.port}/health`);
-      console.log(`🌐  Frontend: ${config.frontendUrl}\n`);
+      console.log(`🌐  Frontend Mode Active [Localhost + Live Website Shared]`);
     });
   } catch (err) {
     console.error('❌ Start failed:', err.message);

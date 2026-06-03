@@ -159,7 +159,8 @@ async function forgotPassword(req, res) {
     return success(res, {}, 'If this email exists, a reset link has been sent.');
   } catch (e) {
     console.error('[forgotPassword]', e);
-    return error(res, 'Could not send reset email. Please try again.');
+    // 🚨 FIX: 'Something went wrong' ki jagah asli error frontend par bhej rahe hain dekhne ke liye
+    return error(res, `Error: ${e.message || 'Could not send reset email'}`);
   }
 }
 

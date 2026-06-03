@@ -8,21 +8,20 @@ datasource db {
 }
 
 model User {
-  id           String        @id @default(cuid())
-  name         String
-  email        String        @unique
-  password     String?
-  role         Role          @default(USER)
-  googleId     String?       @unique
-  avatar       String?
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  resetToken   String?
-  resetExpiry  DateTime?
-
+  id            String         @id @default(cuid())
+  name          String
+  email         String         @unique
+  password      String?
+  role          Role           @default(USER)
+  googleId      String?        @unique
+  avatar        String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  resetExpiry   DateTime?
+  resetToken    String?
   appointments  Appointment[]
-  reviews       Review[]
   patientRecord PatientRecord?
+  reviews       Review[]
 
   @@map("users")
 }
@@ -40,7 +39,6 @@ model Appointment {
   status    AppointmentStatus @default(PENDING)
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
-
   user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("appointments")
@@ -56,24 +54,57 @@ model Review {
   approved  Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("reviews")
 }
 
 model Photo {
-  id          String      @id @default(cuid())
+  id          String        @id @default(cuid())
   url         String
   filename    String
   category    PhotoCategory
   title       String?
   description String?
-  order       Int         @default(0)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  order       Int           @default(0)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
 
   @@map("photos")
+}
+
+model PatientRecord {
+  id               String        @id @default(cuid())
+  userId           String        @unique
+  bloodGroup       String?
+  allergies        String?
+  existingProblems String?
+  lastDentalVisit  String?
+  notes            String?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  visits           VisitRecord[]
+
+  @@map("patient_records")
+}
+
+model VisitRecord {
+  id              String        @id @default(cuid())
+  patientRecordId String
+  appointmentId   String?
+  visitDate       String
+  treatment       String
+  toothNumbers    String?
+  medicines       String?
+  notes           String?
+  nextVisitDate   String?
+  amountCharged   Float?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  patientRecord   PatientRecord @relation(fields: [patientRecordId], references: [id], onDelete: Cascade)
+
+  @@map("visit_records")
 }
 
 enum Role {
@@ -94,40 +125,3 @@ enum PhotoCategory {
   BEFORE_AFTER
   GALLERY
 }
-
-model PatientRecord {
-  id               String        @id @default(cuid())
-  userId           String        @unique
-  bloodGroup       String?
-  allergies        String?
-  existingProblems String?
-  lastDentalVisit  String?
-  notes            String?
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
-
-  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  visits           VisitRecord[]
-
-  @@map("patient_records")
-}
-
-model VisitRecord {
-  id              String        @id @default(cuid())
-  patientRecordId String
-  appointmentId   String?
-  visitDate       String
-  treatment       String
-  toothNumbers    String?
-  medicines       String?
-  notes           String?
-  nextVisitDate   String?
-  amountCharged   Float?
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-
-  patientRecord   PatientRecord @relation(fields: [patientRecordId], references: [id], onDelete: Cascade)
-
-  @@map("visit_records")
-}
-  
