@@ -15,6 +15,7 @@ const SERVICES = [
   { icon: '🦷', title: 'Teeth Cleaning',    desc: 'Professional scaling & polishing for a fresh, healthy smile.' },
   { icon: '✨', title: 'Teeth Whitening',   desc: 'Advanced whitening treatments for a brighter, confident smile.' },
   { icon: '🦴', title: 'Root Canal',        desc: 'Painless RCT using modern techniques to save your natural tooth.' },
+  { icon: '🦷', title: 'Missing Teeth Replacement', desc: 'Complete solution for missing teeth with implants or bridges.' },
   { icon: '👑', title: 'Dental Crown',      desc: 'Custom ceramic & zirconia crowns that look and feel natural.' },
   { icon: '🔧', title: 'Braces & Aligners', desc: 'Metal braces and clear aligners for perfectly aligned teeth.' },
   { icon: '🪥', title: 'Tooth Extraction',  desc: 'Safe, comfortable extractions including wisdom teeth removal.' },

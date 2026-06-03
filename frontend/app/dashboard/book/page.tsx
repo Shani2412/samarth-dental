@@ -12,7 +12,7 @@ type BookForm = {
 };
 
 const SERVICES = [
-  'General Check-up', 'Teeth Cleaning', 'Root Canal Treatment',
+  'General Check-up','Missing teeth replacement', 'Teeth Cleaning', 'Root Canal Treatment',
   'Tooth Extraction', 'Teeth Whitening', 'Dental Implants',
   'Orthodontics / Braces', 'Pediatric Dentistry', 'Emergency Consultation', 'Other',
 ];
