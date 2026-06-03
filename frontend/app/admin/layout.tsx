@@ -49,8 +49,7 @@ function AdminContent({ children }: { children: React.ReactNode }) {
           })}
         </p>
         <a
-          href="https://www.samarthdentalcare.in/website"
-          target="_blank"
+          href="https://www.samarthdentalcare.in"
           className="text-xs text-teal hover:underline font-medium"
         >
           🌐 View Website →
