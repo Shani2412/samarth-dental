@@ -429,7 +429,7 @@ export default function WebsitePage() {
                 <div key={photo.id} onClick={() => setLightbox(photo)}
                   className={`relative overflow-hidden rounded-2xl cursor-pointer group ${i === 0 ? 'col-span-2 row-span-2' : ''}`}
                   style={{ height: i === 0 ? '420px' : '200px' }}>
-                  <img src={photo.url} alt={photo.title || 'Clinic'} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                  <img src={photo.url} alt={photo.title || 'Clinic'} className="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
                     {photo.title && <span className="text-white text-sm font-medium">{photo.title}</span>}
                   </div>
