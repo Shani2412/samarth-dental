@@ -12,8 +12,8 @@ interface Photo {
 }
 
 const SERVICES = [
-  { icon: '🦷', title: 'Teeth Cleaning',    desc: 'Professional scaling & polishing for a fresh, healthy smile.' },
-  { icon: '✨', title: 'Teeth Whitening',   desc: 'Advanced whitening treatments for a brighter, confident smile.' },
+  { icon: '🦷', title: 'Teeth Cleaning',     desc: 'Professional scaling & polishing for a fresh, healthy smile.' },
+  { icon: '✨', title: 'Teeth Whitening',    desc: 'Advanced whitening treatments for a brighter, confident smile.' },
   { icon: '🦴', title: 'Root Canal',        desc: 'Painless RCT using modern techniques to save your natural tooth.' },
   { icon: '🦷', title: 'Missing Teeth Replacement', desc: 'Complete solution for missing teeth with implants or bridges.' },
   { icon: '👑', title: 'Dental Crown',      desc: 'Custom ceramic & zirconia crowns that look and feel natural.' },
@@ -51,7 +51,6 @@ export default function WebsitePage() {
   }, []);
 
   useEffect(() => {
-    // Parallel fetch — faster than sequential
     Promise.allSettled([
       api.get('/reviews'),
       api.get('/photos'),
@@ -63,15 +62,17 @@ export default function WebsitePage() {
 
   const phone = process.env.NEXT_PUBLIC_CLINIC_PHONE || '919033142313';
 
-  // mounted check handled inline per element
+  // ⚡ AUTOMATIC RATING CALCULATION LOGIC
+  // Saare database ke live reviews ka total sum nikal kar count se divide karega
+  const totalReviewsCount = reviews.length;
+  const averageRating = totalReviewsCount > 0 
+    ? (reviews.reduce((sum, r) => sum + r.stars, 0) / totalReviewsCount).toFixed(1)
+    : "5.0"; // Fallback agar koi review na bacha ho
 
-  // Smart action handler — used for Book & Review buttons
   const handleProtectedAction = (destination: string) => {
     if (user) {
-      // Already logged in — go directly
       router.push(destination);
     } else {
-      // Not logged in — go to login with redirect param
       router.push(`/login?redirect=${encodeURIComponent(destination)}`);
     }
   };
@@ -89,8 +90,6 @@ export default function WebsitePage() {
       {/* ── NAVBAR ── */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100 shadow-sm">
         <div className="max-w-6xl mx-auto px-6 h-[68px] flex items-center justify-between">
-
-          {/* Logo */}
           <a href="#" className="flex items-center gap-3 flex-shrink-0 group">
             <div className="w-9 h-9 bg-teal rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-teal/90 transition-colors">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
@@ -103,7 +102,6 @@ export default function WebsitePage() {
             </div>
           </a>
 
-          {/* Desktop Nav Links — center */}
           <div className="hidden md:flex items-center gap-0.5 absolute left-1/2 -translate-x-1/2">
             {[
               { href: '#services', label: 'Services' },
@@ -119,13 +117,11 @@ export default function WebsitePage() {
             ))}
           </div>
 
-          {/* Desktop Auth — right */}
           <div className="hidden md:flex items-center gap-2.5 flex-shrink-0">
             {!mounted ? (
               <div className="w-24 h-8 bg-gray-100 rounded-lg animate-pulse" />
             ) : user ? (
               <div className="relative">
-                {/* Avatar button */}
                 <button
                   onClick={() => setDropdown(!dropdown)}
                   className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl hover:bg-gray-50 border border-transparent hover:border-gray-100 transition-all"
@@ -142,17 +138,14 @@ export default function WebsitePage() {
                   </svg>
                 </button>
 
-                {/* Dropdown */}
                 {dropdown && (
                   <>
                     <div className="fixed inset-0 z-10" onClick={() => setDropdown(false)} />
                     <div className="absolute right-0 top-full mt-2 w-52 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-20 overflow-hidden">
-                      {/* User info */}
                       <div className="px-4 py-3 border-b border-gray-50">
                         <div className="text-sm font-semibold text-gray-800">{user.name}</div>
                         <div className="text-xs text-gray-400 truncate">{user.email || (user.role === 'ADMIN' ? 'Administrator' : 'Patient')}</div>
                       </div>
-                      {/* Dashboard */}
                       <button
                         onClick={() => { setDropdown(false); router.push(user.role === 'ADMIN' ? '/admin' : '/dashboard'); }}
                         className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors text-left"
@@ -163,7 +156,6 @@ export default function WebsitePage() {
                         </svg>
                         {user.role === 'ADMIN' ? 'Admin Panel' : 'My Dashboard'}
                       </button>
-                      {/* Book (only for patients) */}
                       {user.role !== 'ADMIN' && (
                         <button
                           onClick={() => { setDropdown(false); router.push('/dashboard/book'); }}
@@ -175,9 +167,7 @@ export default function WebsitePage() {
                           Book Appointment
                         </button>
                       )}
-                      {/* Divider */}
                       <div className="my-1.5 border-t border-gray-50" />
-                      {/* Logout */}
                       <button
                         onClick={() => { setDropdown(false); handleLogout(); }}
                         className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors text-left"
@@ -205,7 +195,6 @@ export default function WebsitePage() {
             )}
           </div>
 
-          {/* Mobile Hamburger */}
           <button className="md:hidden p-2 rounded-lg hover:bg-gray-50 text-gray-600 transition-colors"
             onClick={() => setMobileMenu(!mobileMenu)}>
             {mobileMenu ? (
@@ -216,10 +205,8 @@ export default function WebsitePage() {
           </button>
         </div>
 
-        {/* Mobile Menu */}
         {mobileMenu && (
           <div className="md:hidden bg-white border-t border-gray-100 px-4 py-3">
-            {/* User info if logged in */}
             {user && (
               <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl mb-3">
                 <div className="w-9 h-9 bg-teal rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
@@ -282,7 +269,7 @@ export default function WebsitePage() {
               Your Smile,<br /><span className="text-teal">Our Priority</span>
             </h1>
             <p className="text-gray-500 text-lg leading-relaxed mb-8 max-w-md">
-              Experience world-class dental care at Samarth Dental Care. Gentle treatments, modern technology, and a smile you&apos;ll love.
+              Experience world-class dental care at Samarth Dental Care. Gentle treatments, modern technology, and a smile you'll love.
             </p>
             <div className="flex flex-wrap gap-3">
               <button onClick={() => handleProtectedAction('/dashboard/book')}
@@ -295,12 +282,21 @@ export default function WebsitePage() {
               </a>
             </div>
             <div className="flex items-center gap-6 mt-10 pt-6 border-t border-gray-100">
-              {[['3000+','Happy Patients'],['10+','Years Experience'],['4.9★','Rating']].map(([val, label]) => (
-                <div key={label}>
-                  <div className="font-display text-2xl font-bold text-teal">{val}</div>
-                  <div className="text-xs text-gray-400">{label}</div>
-                </div>
-              ))}
+              
+              {/* ✅ DYNAMIC HERO STATS: Isse aapki website ki total rating aur counts automic update honge */}
+              <div>
+                <div className="font-display text-2xl font-bold text-teal">3000+</div>
+                <div className="text-xs text-gray-400">Happy Patients</div>
+              </div>
+              <div>
+                <div className="font-display text-2xl font-bold text-teal">10+</div>
+                <div className="text-xs text-gray-400">Years Experience</div>
+              </div>
+              <div>
+                <div className="font-display text-2xl font-bold text-teal">{averageRating}★</div>
+                <div className="text-xs text-gray-400">Based on {totalReviewsCount} Reviews</div>
+              </div>
+
             </div>
           </div>
           <div className="hidden lg:flex items-center justify-center">
@@ -342,7 +338,7 @@ export default function WebsitePage() {
         <div className="max-w-6xl mx-auto px-5">
           <div className="text-center mb-12">
             <div className="text-teal text-sm font-semibold tracking-widest uppercase mb-2">Our Promise</div>
-            <h2 className="font-display text-4xl font-bold mb-3">Why Choose Samarth Dental?</h2>
+            <div className="font-display text-4xl font-bold mb-3">Why Choose Samarth Dental?</div>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {WHYS.map(w => (
@@ -466,7 +462,8 @@ export default function WebsitePage() {
               ⭐ Patient Reviews
             </div>
             <h2 className="font-display text-4xl font-bold text-gray-900 mb-3">What Our Patients Say</h2>
-            <p className="text-gray-400 max-w-md mx-auto text-sm">Real experiences from our patients — honest and unfiltered.</p>
+            {/* ✅ DYNAMIC REVIEW TEXT: Reviews count ke sath sync ho gaya */}
+            <p className="text-gray-400 max-w-md mx-auto text-sm">Real experiences from our {totalReviewsCount} patients — honest and unfiltered.</p>
           </div>
 
           {reviews.length === 0 ? (
@@ -489,15 +486,12 @@ export default function WebsitePage() {
                   const bg = colors[r.name.charCodeAt(0) % 6];
                   return (
                     <div key={r.id} className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col hover:shadow-md transition-shadow">
-                      {/* Stars */}
                       <div className="flex gap-0.5 mb-4">
                         {Array.from({length:5}).map((_,i) => (
                           <span key={i} style={{ color: i < r.stars ? '#F59E0B' : '#E5E7EB', fontSize: '16px' }}>★</span>
                         ))}
                       </div>
-                      {/* Text */}
-                      <p className="text-gray-600 text-sm leading-relaxed flex-1 mb-5">&ldquo;{r.text}&rdquo;</p>
-                      {/* Author */}
+                      <p className="text-gray-600 text-sm leading-relaxed flex-1 mb-5">“{r.text}”</p>
                       <div className="flex items-center gap-3 pt-4 border-t border-gray-50">
                         <div className="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-xs flex-shrink-0"
                           style={{ background: bg }}>
