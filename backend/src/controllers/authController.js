@@ -1,7 +1,7 @@
 // ================================================================
 // FILE: backend/src/controllers/authController.js
 // ACTION: Poora file REPLACE karo iss se
-// Kya fix hua: Multiple Admin capability using Database Role Verification
+// Kya fix hua: Multiple Admin capability AND Custom Admin Review Creator
 // ================================================================
 
 const bcrypt = require('bcryptjs');
@@ -23,7 +23,6 @@ const isAdminEmail = (email) => {
   return adminList.includes(email.toLowerCase());
 };
 
-// POST /api/auth/signup
 // POST /api/auth/signup
 async function signup(req, res) {
   try {
@@ -49,7 +48,6 @@ async function signup(req, res) {
     const token = signToken({ id: user.id, email: user.email, role: user.role });
 
     // 🔥 ULTIMATE FIX: Yahan se 'await' hata diya hai aur ise background me daal diya hai.
-    // Ab agar email deliver nahi bhi hoga ya stuck hoga, toh aapka signup 1 millisecond me complete ho jayega!
     sendEmail(user.email, `🦷 Welcome to ${config.clinic.name}!`, templates.welcome(user.name))
       .catch(mailErr => console.error('📧 Background Mail Error:', mailErr.message));
 
@@ -61,6 +59,7 @@ async function signup(req, res) {
     return error(res, 'Signup failed');
   }
 }
+
 // POST /api/auth/login
 async function login(req, res) {
   try {
@@ -72,12 +71,10 @@ async function login(req, res) {
     if (!ok) return error(res, 'Incorrect password', 401);
 
     // 🔥 HIGHLY CRITICAL FIX: Token ke andar database se nikla hua real user.role pass hona chahiye
-    // Pehle yeh role ko sahi se sync nahi kar raha tha
     const currentRole = isAdminEmail(user.email) ? 'ADMIN' : user.role;
 
     const token = signToken({ id: user.id, email: user.email, role: currentRole });
     
-    // User object ka role bhi update karke bhej rahe hain taaki frontend par patient na dikhe
     user.role = currentRole;
 
     return success(res, { token, user: safeUser(user) }, 'Login successful');
@@ -159,7 +156,6 @@ async function forgotPassword(req, res) {
     return success(res, {}, 'If this email exists, a reset link has been sent.');
   } catch (e) {
     console.error('[forgotPassword]', e);
-    // 🚨 FIX: 'Something went wrong' ki jagah asli error frontend par bhej rahe hain dekhne ke liye
     return error(res, `Error: ${e.message || 'Could not send reset email'}`);
   }
 }
@@ -202,6 +198,38 @@ async function resetPassword(req, res) {
   }
 }
 
+// 🌐 NEW ACTION: POST /api/auth/admin-review
+// Yeh function aapko Google ke custom name aur location wale reviews direct database me safe karne dega
+async function createAdminReview(req, res) {
+  try {
+    const { name, location, stars, text } = req.body;
+
+    // Security check: Sirf login kiya hua admin hi ise access kar sakta hai
+    if (!req.user || req.user.role !== 'ADMIN') {
+      return error(res, 'Unauthorized: Only admins can add custom reviews', 403);
+    }
+
+    if (!name || !stars || !text) {
+      return error(res, 'Name, stars, and review text are required', 400);
+    }
+
+    const review = await prisma.review.create({
+      data: {
+        name: name.trim(),
+        location: location ? location.trim() : 'Vijapur',
+        stars: Number(stars),
+        text: text.trim(),
+        userId: req.user.id // Admin ki user id backend logging ke liye safe rahegi
+      }
+    });
+
+    return success(res, review, 'Google review added successfully!', 201);
+  } catch (e) {
+    console.error('[createAdminReview]', e);
+    return error(res, 'Failed to insert custom review');
+  }
+}
+
 // Seed admin on startup
 async function seedAdmin() {
   try {
@@ -216,4 +244,5 @@ async function seedAdmin() {
   } catch (e) { console.error('[seedAdmin]', e.message); }
 }
 
-module.exports = { signup, login, getMe, seedAdmin, forgotPassword, resetPassword };
+// ✅ Export me createAdminReview ko include kiya hai
+module.exports = { signup, login, getMe, seedAdmin, forgotPassword, resetPassword, createAdminReview };

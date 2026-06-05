@@ -25,6 +25,10 @@ router.get('/auth/me',      authenticate, auth.getMe);
 router.post('/auth/forgot-password', authLimiter, auth.forgotPassword);
 router.post('/auth/reset-password',  auth.resetPassword);
 
+// ⚡ NEW GOOGLE REVIEWS BYPASS ROUTE
+// Isse Admin bina logged-in user key, custom name aur location se direct Google reviews daal sakega
+router.post('/auth/admin-review', requireAdmin, auth.createAdminReview);
+
 // ── Google OAuth ──
 router.get('/auth/google',
   passport.authenticate('google', { scope: ['profile', 'email'], session: false })
@@ -77,7 +81,7 @@ router.get('/photos', photo.getPhotos);
 router.post('/admin/photos',        requireAdmin, upload.single('photo'), photo.uploadPhoto);
 router.get('/admin/photos',         requireAdmin, photo.getAllPhotos);
 router.patch('/admin/photos/:id',   requireAdmin, photo.updatePhoto);
-router.delete('/admin/photos/:id',  requireAdmin, photo.deletePhoto);
+router.delete('/admin/photos/:id',   requireAdmin, photo.deletePhoto);
 
 // 🚨 SABSE CRITICAL: Yeh export line miss nahi honi chahiye!
 module.exports = router;
