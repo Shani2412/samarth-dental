@@ -354,6 +354,68 @@ export default function WebsitePage() {
         </div>
       </section>
 
+      {/* ── DOCTOR PROFILE ── */}
+<section id="doctor" className="py-20 bg-gray-50">
+  <div className="max-w-6xl mx-auto px-5">
+    <div className="text-center mb-12">
+      <div className="text-teal text-sm font-semibold tracking-widest uppercase mb-2">Meet Your Doctor</div>
+      <h2 className="font-display text-4xl font-bold mb-3">Dr. Vrujeshkumar Patel</h2>
+    </div>
+    <div className="max-w-3xl mx-auto bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="flex flex-col md:flex-row items-center gap-0">
+        
+        {/* Photo */}
+        <div className="w-full md:w-64 flex-shrink-0 bg-teal-light flex items-center justify-center p-10 md:min-h-[320px]">
+          <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-white shadow-lg bg-teal flex items-center justify-center">
+            {/* ✅ Yahan apni Cloudinary URL daalo */}
+            <img
+              src="https://res.cloudinary.com/YOUR_CLOUD/image/upload/YOUR_PHOTO.jpg"
+              alt="Dr. Vrujeshkumar Patel"
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = 'none';
+                (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
+              }}
+            />
+            <span className="text-6xl hidden">👨‍⚕️</span>
+          </div>
+        </div>
+
+        {/* Info */}
+        <div className="flex-1 p-8">
+          <div className="inline-flex items-center gap-2 bg-teal-light text-teal text-xs font-semibold px-3 py-1.5 rounded-full mb-4">
+            🦷 B.D.S. — Bachelor of Dental Surgery
+          </div>
+          <h3 className="font-display text-2xl font-bold text-gray-900 mb-1">Dr. Vrujeshkumar Patel</h3>
+          <p className="text-gray-400 text-sm mb-5">Founder & Lead Dentist, Samarth Dental Care</p>
+
+          <div className="grid grid-cols-2 gap-3 mb-6">
+            {[
+              { icon: '🏆', label: '10+ Years', sub: 'Experience' },
+              { icon: '😊', label: '3000+', sub: 'Happy Patients' },
+              { icon: '🔬', label: 'Modern', sub: 'Techniques' },
+              { icon: '💉', label: 'Painless', sub: 'Treatments' },
+            ].map(item => (
+              <div key={item.label} className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                <span className="text-xl">{item.icon}</span>
+                <div>
+                  <div className="font-bold text-gray-800 text-sm leading-tight">{item.label}</div>
+                  <div className="text-gray-400 text-xs">{item.sub}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <p className="text-gray-500 text-sm leading-relaxed">
+            Dr. Patel is dedicated to providing gentle, patient-focused dental care using the latest techniques. 
+            Serving Vijapur and Mehsana district for over a decade.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
       {/* ── GALLERY ── */}
       {photos.length > 0 && (
         <section id="gallery" className="py-20 bg-gray-50">
