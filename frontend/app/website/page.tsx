@@ -369,7 +369,7 @@ export default function WebsitePage() {
           <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-white shadow-lg bg-teal flex items-center justify-center">
             {/* ✅ Yahan apni Cloudinary URL daalo */}
             <img
-              src="https://res.cloudinary.com/YOUR_CLOUD/image/upload/YOUR_PHOTO.jpg"
+              src="https://res.cloudinary.com/dob5fkcfn/image/upload/v1780646416/samarth-dental/doctor/iedrsqbizqpi1sfilhry.jpg"
               alt="Dr. Vrujeshkumar Patel"
               className="w-full h-full object-cover"
               onError={(e) => {
