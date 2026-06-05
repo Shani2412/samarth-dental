@@ -371,7 +371,7 @@ export default function WebsitePage() {
             <img
               src="https://res.cloudinary.com/dob5fkcfn/image/upload/v1780646416/samarth-dental/doctor/iedrsqbizqpi1sfilhry.jpg"
               alt="Dr. Vrujeshkumar Patel"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover object-top"
               onError={(e) => {
                 (e.target as HTMLImageElement).style.display = 'none';
                 (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
