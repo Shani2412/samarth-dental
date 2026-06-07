@@ -481,7 +481,7 @@ export default function WebsitePage() {
           <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-10">
             {[
               { icon: '📍', title: 'Address', lines: ['20/21 Dev Complex', 'Anandpura Char Rasta', 'Vijapur, Gujarat – 384570'] },
-              { icon: '📞', title: 'Phone',   lines: ['+91 90331 42313', 'Morning: 6am – 2pm', 'Evening: 6pm – 9pm'] },
+              { icon: '📞', title: 'Phone',   lines: ['+91 90331 42313', 'Morning: 9am – 1pm', 'Evening: 4pm – 8pm'] },
               { icon: '📧', title: 'Email',   lines: ['virupatel2794@gmail.com', 'We reply within 2 hours', 'Or WhatsApp us anytime'] },
             ].map(c => (
               <div key={c.title} className="text-center p-6 rounded-2xl bg-gray-50 hover:bg-teal-light transition-colors">
