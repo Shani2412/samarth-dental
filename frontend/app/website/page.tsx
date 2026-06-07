@@ -88,173 +88,180 @@ export default function WebsitePage() {
     <div className="font-body bg-white text-gray-800">
 
       {/* ── NAVBAR ── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100 shadow-sm">
-        <div className="max-w-6xl mx-auto px-6 h-[68px] flex items-center justify-between">
-          <a href="#" className="flex items-center gap-3 flex-shrink-0 group">
-            <div className="w-9 h-9 bg-teal rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-teal/90 transition-colors">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2C9.5 2 7 4 7 7c0 1.5.5 3 1 4.5C8.5 13 9 15 9 17c0 1.1.9 2 2 2h2c1.1 0 2-.9 2-2 0-2 .5-4 1-5.5.5-1.5 1-3 1-4.5 0-3-2.5-5-5-5z"/>
-              </svg>
-            </div>
-            <div>
-              <div className="font-bold text-gray-900 text-[15px] leading-tight">Samarth Dental Care</div>
-              <div className="text-[11px] text-gray-400 leading-tight">Vijapur, Mehsana</div>
-            </div>
-          </a>
+     {/* ── NAVBAR ── */}
+<nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100 shadow-sm">
+  <div className="max-w-6xl mx-auto px-6 h-[68px] flex items-center justify-between">
+    <a href="#" className="flex items-center gap-3 flex-shrink-0 group">
+      {/* ✅ LOGO — public/logo.png */}
+      <div className="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0">
+        <img
+          src="/logo.png"
+          alt="Samarth Dental Care"
+          className="w-full h-full object-contain"
+        />
+      </div>
+      <div>
+        <div className="font-bold text-gray-900 text-[15px] leading-tight">Samarth Dental Care</div>
+        <div className="text-[11px] text-gray-400 leading-tight">Vijapur, Mehsana</div>
+      </div>
+    </a>
 
-          <div className="hidden md:flex items-center gap-0.5 absolute left-1/2 -translate-x-1/2">
-            {[
-              { href: '#services', label: 'Services' },
-              { href: '#why-us',   label: 'Why Us'   },
-              ...(photos.length > 0 ? [{ href: '#gallery', label: 'Gallery' }] : []),
-              { href: '#reviews',  label: 'Reviews'  },
-              { href: '#contact',  label: 'Contact'  },
-            ].map(link => (
-              <a key={link.href} href={link.href}
-                className="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-all">
-                {link.label}
-              </a>
-            ))}
-          </div>
+    <div className="hidden md:flex items-center gap-0.5 absolute left-1/2 -translate-x-1/2">
+      {[
+        { href: '#services', label: 'Services' },
+        { href: '#why-us',   label: 'Why Us'   },
+        { href: '#doctor',   label: 'Doctor'   },
+        ...(photos.length > 0 ? [{ href: '#gallery', label: 'Gallery' }] : []),
+        { href: '#reviews',  label: 'Reviews'  },
+        { href: '#contact',  label: 'Contact'  },
+      ].map(link => (
+        <a key={link.href} href={link.href}
+          className="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-all">
+          {link.label}
+        </a>
+      ))}
+    </div>
 
-          <div className="hidden md:flex items-center gap-2.5 flex-shrink-0">
-            {!mounted ? (
-              <div className="w-24 h-8 bg-gray-100 rounded-lg animate-pulse" />
-            ) : user ? (
-              <div className="relative">
+    <div className="hidden md:flex items-center gap-2.5 flex-shrink-0">
+      {!mounted ? (
+        <div className="w-24 h-8 bg-gray-100 rounded-lg animate-pulse" />
+      ) : user ? (
+        <div className="relative">
+          <button
+            onClick={() => setDropdown(!dropdown)}
+            className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl hover:bg-gray-50 border border-transparent hover:border-gray-100 transition-all"
+          >
+            <div className="w-8 h-8 bg-teal rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
+              {user.name[0].toUpperCase()}
+            </div>
+            <div className="text-left">
+              <div className="text-sm font-semibold text-gray-800 leading-tight">{user.name.split(' ')[0]}</div>
+              <div className="text-[10px] text-gray-400 leading-tight">{user.role === 'ADMIN' ? 'Administrator' : 'Patient'}</div>
+            </div>
+            <svg className={`w-4 h-4 text-gray-400 transition-transform ${dropdown ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <path d="M19 9l-7 7-7-7"/>
+            </svg>
+          </button>
+
+          {dropdown && (
+            <>
+              <div className="fixed inset-0 z-10" onClick={() => setDropdown(false)} />
+              <div className="absolute right-0 top-full mt-2 w-52 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-20 overflow-hidden">
+                <div className="px-4 py-3 border-b border-gray-50">
+                  <div className="text-sm font-semibold text-gray-800">{user.name}</div>
+                  <div className="text-xs text-gray-400 truncate">{user.email || (user.role === 'ADMIN' ? 'Administrator' : 'Patient')}</div>
+                </div>
                 <button
-                  onClick={() => setDropdown(!dropdown)}
-                  className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl hover:bg-gray-50 border border-transparent hover:border-gray-100 transition-all"
+                  onClick={() => { setDropdown(false); router.push(user.role === 'ADMIN' ? '/admin' : '/dashboard'); }}
+                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors text-left"
                 >
-                  <div className="w-8 h-8 bg-teal rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
-                    {user.name[0].toUpperCase()}
-                  </div>
-                  <div className="text-left">
-                    <div className="text-sm font-semibold text-gray-800 leading-tight">{user.name.split(' ')[0]}</div>
-                    <div className="text-[10px] text-gray-400 leading-tight">{user.role === 'ADMIN' ? 'Administrator' : 'Patient'}</div>
-                  </div>
-                  <svg className={`w-4 h-4 text-gray-400 transition-transform ${dropdown ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                    <path d="M19 9l-7 7-7-7"/>
+                  <svg className="w-4 h-4 text-teal" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+                    <rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>
                   </svg>
+                  {user.role === 'ADMIN' ? 'Admin Panel' : 'My Dashboard'}
                 </button>
-
-                {dropdown && (
-                  <>
-                    <div className="fixed inset-0 z-10" onClick={() => setDropdown(false)} />
-                    <div className="absolute right-0 top-full mt-2 w-52 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-20 overflow-hidden">
-                      <div className="px-4 py-3 border-b border-gray-50">
-                        <div className="text-sm font-semibold text-gray-800">{user.name}</div>
-                        <div className="text-xs text-gray-400 truncate">{user.email || (user.role === 'ADMIN' ? 'Administrator' : 'Patient')}</div>
-                      </div>
-                      <button
-                        onClick={() => { setDropdown(false); router.push(user.role === 'ADMIN' ? '/admin' : '/dashboard'); }}
-                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors text-left"
-                      >
-                        <svg className="w-4 h-4 text-teal" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                          <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
-                          <rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>
-                        </svg>
-                        {user.role === 'ADMIN' ? 'Admin Panel' : 'My Dashboard'}
-                      </button>
-                      {user.role !== 'ADMIN' && (
-                        <button
-                          onClick={() => { setDropdown(false); router.push('/dashboard/book'); }}
-                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors text-left"
-                        >
-                          <svg className="w-4 h-4 text-teal" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                            <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
-                          </svg>
-                          Book Appointment
-                        </button>
-                      )}
-                      <div className="my-1.5 border-t border-gray-50" />
-                      <button
-                        onClick={() => { setDropdown(false); handleLogout(); }}
-                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors text-left"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                          <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>
-                        </svg>
-                        Logout
-                      </button>
-                    </div>
-                  </>
+                {user.role !== 'ADMIN' && (
+                  <button
+                    onClick={() => { setDropdown(false); router.push('/dashboard/book'); }}
+                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors text-left"
+                  >
+                    <svg className="w-4 h-4 text-teal" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+                    </svg>
+                    Book Appointment
+                  </button>
                 )}
-              </div>
-            ) : (
-              <div className="flex items-center gap-2">
-                <button onClick={() => router.push('/login')}
-                  className="px-4 py-2 text-sm font-semibold text-gray-600 hover:text-teal hover:bg-gray-50 rounded-lg transition-all">
-                  Login
+                <div className="my-1.5 border-t border-gray-50" />
+                <button
+                  onClick={() => { setDropdown(false); handleLogout(); }}
+                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors text-left"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>
+                  </svg>
+                  Logout
                 </button>
-                <button onClick={() => router.push('/signup')}
-                  className="px-4 py-2 bg-teal text-white text-sm font-semibold rounded-xl hover:bg-teal/90 transition-colors shadow-sm shadow-teal/20">
-                  Book Appointment
-                </button>
               </div>
-            )}
-          </div>
-
-          <button className="md:hidden p-2 rounded-lg hover:bg-gray-50 text-gray-600 transition-colors"
-            onClick={() => setMobileMenu(!mobileMenu)}>
-            {mobileMenu ? (
-              <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg>
-            ) : (
-              <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
-            )}
+            </>
+          )}
+        </div>
+      ) : (
+        <div className="flex items-center gap-2">
+          <button onClick={() => router.push('/login')}
+            className="px-4 py-2 text-sm font-semibold text-gray-600 hover:text-teal hover:bg-gray-50 rounded-lg transition-all">
+            Login
+          </button>
+          <button onClick={() => router.push('/signup')}
+            className="px-4 py-2 bg-teal text-white text-sm font-semibold rounded-xl hover:bg-teal/90 transition-colors shadow-sm shadow-teal/20">
+            Book Appointment
           </button>
         </div>
+      )}
+    </div>
 
-        {mobileMenu && (
-          <div className="md:hidden bg-white border-t border-gray-100 px-4 py-3">
-            {user && (
-              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl mb-3">
-                <div className="w-9 h-9 bg-teal rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
-                  {user.name[0].toUpperCase()}
-                </div>
-                <div>
-                  <div className="text-sm font-semibold text-gray-800">{user.name}</div>
-                  <div className="text-xs text-gray-400">{user.role === 'ADMIN' ? 'Administrator' : 'Patient'}</div>
-                </div>
-              </div>
-            )}
-            <div className="space-y-0.5 mb-3">
-              {[
-                { href: '#services', label: 'Services' },
-                { href: '#why-us',   label: 'Why Us'   },
-                { href: '#reviews',  label: 'Reviews'  },
-                { href: '#contact',  label: 'Contact'  },
-              ].map(link => (
-                <a key={link.href} href={link.href} onClick={() => setMobileMenu(false)}
-                  className="block px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-teal hover:bg-gray-50 rounded-lg transition-all">
-                  {link.label}
-                </a>
-              ))}
-            </div>
-            <div className="space-y-2 pt-3 border-t border-gray-100">
-              {user ? (
-                <>
-                  <button onClick={() => { setMobileMenu(false); router.push(user.role === 'ADMIN' ? '/admin' : '/dashboard'); }}
-                    className="w-full py-2.5 bg-teal text-white text-sm font-semibold rounded-xl">
-                    {user.role === 'ADMIN' ? 'Admin Panel' : 'My Dashboard'}
-                  </button>
-                  <button onClick={() => { setMobileMenu(false); handleLogout(); }}
-                    className="w-full py-2.5 text-sm font-semibold text-red-500 border border-red-100 rounded-xl hover:bg-red-50 transition-colors">
-                    Logout
-                  </button>
-                </>
-              ) : (
-                <div className="flex gap-2">
-                  <button onClick={() => { setMobileMenu(false); router.push('/login'); }}
-                    className="flex-1 py-2.5 text-sm font-semibold border border-gray-200 text-gray-600 rounded-xl">Login</button>
-                  <button onClick={() => { setMobileMenu(false); router.push('/signup'); }}
-                    className="flex-1 py-2.5 text-sm font-semibold bg-teal text-white rounded-xl">Sign Up</button>
-                </div>
-              )}
-            </div>
+    <button className="md:hidden p-2 rounded-lg hover:bg-gray-50 text-gray-600 transition-colors"
+      onClick={() => setMobileMenu(!mobileMenu)}>
+      {mobileMenu ? (
+        <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg>
+      ) : (
+        <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      )}
+    </button>
+  </div>
+
+  {/* Mobile Menu */}
+  {mobileMenu && (
+    <div className="md:hidden bg-white border-t border-gray-100 px-4 py-3">
+      {user && (
+        <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl mb-3">
+          <div className="w-9 h-9 bg-teal rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+            {user.name[0].toUpperCase()}
+          </div>
+          <div>
+            <div className="text-sm font-semibold text-gray-800">{user.name}</div>
+            <div className="text-xs text-gray-400">{user.role === 'ADMIN' ? 'Administrator' : 'Patient'}</div>
+          </div>
+        </div>
+      )}
+      <div className="space-y-0.5 mb-3">
+        {[
+          { href: '#services', label: 'Services' },
+          { href: '#why-us',   label: 'Why Us'   },
+          { href: '#doctor',   label: 'Doctor'   },
+          { href: '#reviews',  label: 'Reviews'  },
+          { href: '#contact',  label: 'Contact'  },
+        ].map(link => (
+          <a key={link.href} href={link.href} onClick={() => setMobileMenu(false)}
+            className="block px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-teal hover:bg-gray-50 rounded-lg transition-all">
+            {link.label}
+          </a>
+        ))}
+      </div>
+      <div className="space-y-2 pt-3 border-t border-gray-100">
+        {user ? (
+          <>
+            <button onClick={() => { setMobileMenu(false); router.push(user.role === 'ADMIN' ? '/admin' : '/dashboard'); }}
+              className="w-full py-2.5 bg-teal text-white text-sm font-semibold rounded-xl">
+              {user.role === 'ADMIN' ? 'Admin Panel' : 'My Dashboard'}
+            </button>
+            <button onClick={() => { setMobileMenu(false); handleLogout(); }}
+              className="w-full py-2.5 text-sm font-semibold text-red-500 border border-red-100 rounded-xl hover:bg-red-50 transition-colors">
+              Logout
+            </button>
+          </>
+        ) : (
+          <div className="flex gap-2">
+            <button onClick={() => { setMobileMenu(false); router.push('/login'); }}
+              className="flex-1 py-2.5 text-sm font-semibold border border-gray-200 text-gray-600 rounded-xl">Login</button>
+            <button onClick={() => { setMobileMenu(false); router.push('/signup'); }}
+              className="flex-1 py-2.5 text-sm font-semibold bg-teal text-white rounded-xl">Sign Up</button>
           </div>
         )}
-      </nav>
+      </div>
+    </div>
+  )}
+</nav>
 
       {/* ── HERO ── */}
       <section className="pt-24 pb-20 bg-gradient-to-br from-teal-light via-white to-white relative overflow-hidden">
